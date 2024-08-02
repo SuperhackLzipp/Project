@@ -52,6 +52,11 @@ contract PartyPromises {
         _;
     }
 
+    modifier nonexistant(bytes32 _title) {
+        require(promises[_title] == 0, "Promise already exists");
+        _;
+    }
+
     modifier notCompleted(bytes32 _title) {
         require(promises[_title].completed == false, "Promise has already been completed");
         _;
@@ -110,8 +115,9 @@ contract PartyPromises {
      * @param _title - title of the promise
      * @param _description - description of the promise
      */
-    function AddPromise(bytes32 _title, string calldata _description) external notExpired isOwner {
-        promises.push(Promise(_title, _description, false));
+    function AddPromise(bytes32 _title, string calldata _description) external notExpired isOwner nonexistant(_title) {
+        promises[_title].description = _description;
+        promises[_title].completed = false;
         emit PromiseAdded(_title, _description);
     }
 
@@ -120,10 +126,8 @@ contract PartyPromises {
      * @param _title - title of the promise
      */
     function CompletePromise(bytes32 _title) external notExpired notCompleted(_title) {
-        if (promises[_title].completed == false) {
-            promises[_title].completed = true;
-            emit PromiseCompleted(_title);
-        }
+        promises[_title].completed = true;
+        emit PromiseCompleted(_title);
     }
 
     /**
