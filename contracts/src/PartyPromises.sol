@@ -68,4 +68,39 @@ contract PartyPromises {
         require(msg.value > 0, "Must send some Ether");
         emit Received(msg.sender, msg.value);
     }
+
+    /**
+     * Adds a promise to the list of promises
+     * @param _title - title of the promise
+     * @param _description - description of the promise
+     */
+    function AddPromise(bytes32 _title, string calldata _description) public notExpired isOwner {
+        Promise memory newPromise = Promise(_title, _description, false);
+        promises.push(newPromise);
+        emit PromiseAdded(_title, _description);
+    }
+
+    /**
+     * Completes a promise. Only addresses verified by EAS will be allowed to call this function
+     * @param _title - title of the promise
+     */
+    function CompletePromise(bytes32 _title) public notExpired {
+        for (uint i = 0; i < promises.length; i++) {
+            if (promises[i].title == _title) {
+                promises[i].completed = true;
+                emit PromiseCompleted(_title);
+                return;
+            }
+        }
+    }
+
+    // helpers
+    function checkAllPromisesCompleted() public view returns (bool) {
+        for (uint i = 0; i < promises.length; i++) {
+            if (!promises[i].completed) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
