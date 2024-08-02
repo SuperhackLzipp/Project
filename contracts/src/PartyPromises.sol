@@ -22,14 +22,16 @@ contract PartyPromises {
     event TimeExpired();
 
     // private variables
-    address private immutable owner; // owner of the contract
     mapping(address => Donator) private donors; // mapping of donors
+    address[] private                   donorAddresses; // list of donor addresses
 
     // public variables
-    bytes32 public immutable partyName; // name of the party
-    uint256 public immutable creationTime; // time of creation (dd/mm/yyyy)
-    uint256 public immutable expirationTime; // time of expiration (dd/mm/yyyy)
-    mapping(bytes32 => Promise) public promises; // mapping of promises
+    address public immutable            owner; // owner of the contract
+    bytes32 public immutable            partyName; // name of the party
+    uint256 public immutable            creationTime; // time of creation (dd/mm/yyyy)
+    uint256 public immutable            expirationTime; // time of expiration (dd/mm/yyyy)
+    mapping(bytes32 => Promise) public  promises; // mapping of promises
+    bytes32[] public                    promiseTitles; // list of promise titles
 
     // modifiers
     modifier notExpired() {
@@ -94,6 +96,7 @@ contract PartyPromises {
             _promiseTitles.length == _individualAmounts.length, "Length of promise titles and amounts must be equal"
         );
 
+        donorAddresses.push(msg.sender);
         donors[msg.sender].totalAmount = _totalAmount;
         for (uint256 i = 0; i < _promiseTitles.length; i++) {
             donors[msg.sender].promiseDonations[_promiseTitles[i]] = _individualAmounts[i];
@@ -116,6 +119,7 @@ contract PartyPromises {
      * @param _description - description of the promise
      */
     function AddPromise(bytes32 _title, string calldata _description) external notExpired isOwner nonexistant(_title) {
+        promiseTitles.push(_title);
         promises[_title].description = _description;
         promises[_title].completed = false;
         emit PromiseAdded(_title, _description);
@@ -134,24 +138,9 @@ contract PartyPromises {
      * Withdraws the adequate amount of funds from the contract for every promise completed
      * For every promise not completed, the funds will be sent back to the donors
      */
-    function HandlePromiseRewards() public isOwner isExpired {
-        if (checkAllPromisesCompleted() == true) {
-            payable(owner).transfer(address(this).balance);
-            return;
-        }
-
+    function HandlePromiseRewards() internal isOwner isExpired {
         uint256 balanceToWithdraw = 0;
         uint256 len = donors.length;
         for (uint256 i = 0; i < len; i++) {}
-    }
-
-    // helpers
-    function checkAllPromisesCompleted() public view returns (bool) {
-        for (uint256 i = 0; i < promises.length; i++) {
-            if (!promises[i].completed) {
-                return false;
-            }
-        }
-        return true;
     }
 }
