@@ -23,15 +23,15 @@ contract PartyPromises {
 
     // private variables
     mapping(address => Donator) private donors; // mapping of donors
-    address[] private                   donorAddresses; // list of donor addresses
+    address[] private donorAddresses; // list of donor addresses
 
     // public variables
-    address public immutable            owner; // owner of the contract
-    bytes32 public immutable            partyName; // name of the party
-    uint256 public immutable            creationTime; // time of creation (dd/mm/yyyy)
-    uint256 public immutable            expirationTime; // time of expiration (dd/mm/yyyy)
-    mapping(bytes32 => Promise) public  promises; // mapping of promises
-    bytes32[] public                    promiseTitles; // list of promise titles
+    address public immutable owner; // owner of the contract
+    bytes32 public immutable partyName; // name of the party
+    uint256 public immutable creationTime; // time of creation (dd/mm/yyyy)
+    uint256 public immutable expirationTime; // time of expiration (dd/mm/yyyy)
+    mapping(bytes32 => Promise) public promises; // mapping of promises
+    bytes32[] public promiseTitles; // list of promise titles
 
     // modifiers
     modifier notExpired() {
@@ -140,7 +140,11 @@ contract PartyPromises {
      */
     function HandlePromiseRewards() internal isOwner isExpired {
         uint256 balanceToWithdraw = 0;
-        uint256 len = donors.length;
-        for (uint256 i = 0; i < len; i++) {}
+        uint256 len = donorAddresses.length;
+        for (uint256 i = 0; i < len; i++) {
+            // for every promise the donor has donated to
+            // if promise was not completed, return funds to donor
+        }
+        // wire all remaining funds to party
     }
 }
