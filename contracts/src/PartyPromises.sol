@@ -43,7 +43,7 @@ contract PartyPromises {
         string _partyProgramURL,
         bytes32[] _promiseTitles, // optional
         string[] _descriptions // optional
-    ) payable {
+    ) {
         require(
             _promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal"
         );

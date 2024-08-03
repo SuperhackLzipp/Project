@@ -5,13 +5,13 @@ import {Test, console} from "forge-std/Test.sol";
 import {PartyPromises} from "../src/PartyPromises.sol";
 
 contract PartyPromisesTest is Test {
-    PartyPromises public    partyPromises;
-    bytes32 public          partyName;
-    uint256 public          creationTime;
-    uint256 public          expirationTime;
-    address public          owner;
-    bytes32 public          promiseTitle1;
-    bytes32 public          promiseTitle2;
+    PartyPromises public partyPromises;
+    bytes32 public partyName;
+    uint256 public creationTime;
+    uint256 public expirationTime;
+    address public owner;
+    bytes32 public promiseTitle1;
+    bytes32 public promiseTitle2;
 
     function setUp() public {
         partyName = "Example Party".toBytes32();
@@ -31,23 +31,9 @@ contract PartyPromisesTest is Test {
     /**
      * The following tests will test the receive && fallback functions
      */
-    function test_ReceiveFunction() public {
-        (bool success, ) = address(partyPromises).call{value: 1 ether}("");
-        require(success, "Ether transfer failed");
-
-        assertEq(address(partyPromises).balance, 1 ether);
-    }
-
-    function test_FallbackFunction() public {
-        (bool success, ) = address(partyPromises).call{value: 1 ether}("0x1234");
-        require(success, "Ether transfer with data failed");
-
-        assertEq(address(partyPromises).balance, 1 ether);
-    }
-
-    function test_NonExistentFunctionCall() public {
-        (bool success, ) = address(partyPromises).call(abi.encodeWithSignature("nonExistentFunction()"));
-        require(success, "Call to non-existent function failed");
+    function testFail_SendEthAnonymously() public {
+        (bool success,) = address(partyPromises).call{value: 1 ether}("");
+        require(!success, "Ether transfer failed");
     }
 
     /**
@@ -121,12 +107,34 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.donors(address(this)).promiseDonations(promiseTitle2), amount2);
     }
 
-    function test_DonateAnonymouslyNonRefundable() {
-        partyPromises.DonateAnonymouslyNonRefundable{value: 1 ether}();
-        assertEq(address(partyPromises).balance, 1);
+    function test_HandlePromiseFundsOneCompleted() {
+        uint256 amount1 = 1 ether;
+        uint256 amount2 = 2 ether;
+        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        uint256[] memory amounts = [amount1, amount2];
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+
+        partyPromises.CompletePromise(promiseTitle1);
+        vm.warp(creationTime + 2 days);
+
+        partyPromises.HandlePromiseFunds();
+        assertEq(partyPromises.GetPartyBalance(), 2 ether);
+        assertEq(address(this).balance, 98 ether);
     }
 
-    function test_HandlePromiseFunds() {}
+    function test_HandlePromiseFundsAllCompleted() {
+        partyPromises.CompletePromise(promiseTitle1);
+        partyPromises.CompletePromise(promiseTitle2);
+        vm.warp(creationTime + 2 days);
+
+        partyPromises.HandlePromiseFunds();
+        assertEq(partyPromises.GetPartyBalance(), 0);
+    }
+
+    function testFail_HandlePromiseFunds() {
+        partyPromises.CompletePromise(promiseTitle1);
+        vm.warp(creationTime + 2 days);
+    }
 
     /**
      * The following tests will test all donor-related functions
@@ -154,7 +162,7 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetDonorPromiseDonations() public {
-
+        mapping(bytes32 => uint256) promiseDonations = partyPromises.GetDonorPromiseDonations(address(this));
     }
 
     /**
@@ -166,14 +174,18 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetOwner() public {
-        require.equal(partyPromises.GetOwner(), address(this));
+        assertEq(partyPromises.GetOwner(), address(this));
     }
 
     function test_GetPartyName() public {
-        require.equal(partyPromises.GetPartyName(), "Example Party".toBytes32());
+        assertEq(partyPromises.GetPartyName(), "Example Party".toBytes32());
     }
 
-    function test_GetCreationTime() public {}
+    function test_GetCreationTime() public {
+        assertEq(partyPromises.GetCreationTime(), creationTime);
+    }
 
-    function test_GetExpirationTime() public {}
+    function test_GetExpirationTime() public {
+        assertEq(partyPromises.GetExpirationTime(), expirationTime);
+    }
 }
