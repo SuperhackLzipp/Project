@@ -22,29 +22,22 @@ contract PartyPromisesTest is Test {
      * The following tests will test the receive && fallback functions
      */
     function test_ReceiveFunction() public {
-        // Send 1 ether to the contract without data
         (bool success, ) = address(partyPromises).call{value: 1 ether}("");
         require(success, "Ether transfer failed");
 
-        // Add assertions to verify the donation
         assertEq(address(partyPromises).balance, 1 ether);
     }
 
     function test_FallbackFunction() public {
-        // Send 1 ether to the contract with data
         (bool success, ) = address(partyPromises).call{value: 1 ether}("0x1234");
         require(success, "Ether transfer with data failed");
 
-        // Add assertions to verify the donation
         assertEq(address(partyPromises).balance, 1 ether);
     }
 
     function test_NonExistentFunctionCall() public {
-        // Call a non-existent function
         (bool success, ) = address(partyPromises).call(abi.encodeWithSignature("nonExistentFunction()"));
         require(success, "Call to non-existent function failed");
-
-        // Add assertions to verify the state if needed
     }
 
     /**
