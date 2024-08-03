@@ -2,15 +2,21 @@
 pragma solidity ^0.8.20;
 
 contract PartyPromises {
+    // constructor
+    constructor(bytes32 _partyName, uint256 _expirationTime) payable {
+        partyName = _partyName;
+        creationTime = block.timestamp;
+        expirationTime = _expirationTime;
+    }
+
     // Struct for storing a donator
     struct Donator {
         uint256 totalAmount;
         mapping(bytes32 => uint256) promiseDonations; // list of promises the donator chooses to donate to
     }
-    // Struct for storing a promise
 
+    // Struct for storing a promise
     struct Promise {
-        // bytes32     promiseTitle;
         string description;
         bool completed;
     }
@@ -19,6 +25,7 @@ contract PartyPromises {
     event Donated(uint256);
     event PromiseAdded(bytes32 _title, string _description, uint8 _priority);
     event PromiseCompleted(bytes32 _title);
+    event PromiseUncompleted(bytes32 _title);
     event Payback(address _address, uint256 _amount);
     event DonationsReceived(address _address, uint256 _amount);
     event TimeExpired();
@@ -59,18 +66,6 @@ contract PartyPromises {
     modifier nonexistant(bytes32 _title) {
         require(promises[_title] == 0, "Promise already exists");
         _;
-    }
-
-    modifier notCompleted(bytes32 _title) {
-        require(promises[_title].completed == false, "Promise has already been completed");
-        _;
-    }
-
-    // constructor
-    constructor(bytes32 _partyName, uint256 _expirationTime) {
-        partyName = _partyName;
-        creationTime = block.timestamp;
-        expirationTime = _expirationTime;
     }
 
     // payable default functions
@@ -131,9 +126,18 @@ contract PartyPromises {
      * Completes a promise. Only addresses verified by EAS will be allowed to call this function
      * @param _title - title of the promise
      */
-    function CompletePromise(bytes32 _title) external notExpired notCompleted(_title) {
+    function CompletePromise(bytes32 _title) external notExpired {
         promises[_title].completed = true;
         emit PromiseCompleted(_title);
+    }
+
+    /**
+     * Uncompletes a promise. Only addresses verified by EAS will be allowed to call this function
+     * @param _title - title of the promise
+     */
+    function UncompletePromise(bytes32 _title) external notExpired {
+        promises[_title].completed = false;
+        emit PromiseUncompleted(_title);
     }
 
     /**
@@ -159,7 +163,6 @@ contract PartyPromises {
                 require(donorAddresses[i].totalAmount >= balanceToPayback, "Insufficient funds to payback");
                 donorAddresses[i].transfer(balanceToPayback);
                 emit Payback(donorAddresses[i], balanceToPayback);
-                
             }
         }
         // wire all remaining funds to party
