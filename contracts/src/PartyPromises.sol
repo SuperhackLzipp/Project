@@ -138,13 +138,27 @@ contract PartyPromises {
      * Withdraws the adequate amount of funds from the contract for every promise completed
      * For every promise not completed, the funds will be sent back to the donors
      */
-    function HandlePromiseRewards() internal isOwner isExpired {
-        uint256 balanceToWithdraw = 0;
-        uint256 len = donorAddresses.length;
+    function HandlePromiseFunds() external isOwner isExpired {
+        uint256 balanceToPayback;
+        uint256 iLen = donorAddresses.length;
+        uint256 jLen = promiseTitles.length;
+        // for loop for handling every single donor
         for (uint256 i = 0; i < len; i++) {
-            // for every promise the donor has donated to
-            // if promise was not completed, return funds to donor
+            balanceToPayback = 0;
+            // for loop for every single promise
+            for (uint256 j = 0; j < jLen; j++) {
+                if (
+                    donors[donorAddresses[i]].promiseDonations[promiseTitles[j]] != 0
+                        && promises[promiseTitles[j]].completed == false
+                ) {
+                    balanceToPayback += donors[donorAddresses[i]].promiseDonations[promiseTitles[j]];
+                }
+                // transfer funds back to donor
+                require(donorAddresses[i].totalAmount >= balanceToPayback, "Insufficient funds to payback");
+                donorAddresses[i].transfer(balanceToPayback);
+            }
         }
         // wire all remaining funds to party
+        owner.transfer(address(this).balance);
     }
 }
