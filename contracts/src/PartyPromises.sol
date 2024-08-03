@@ -19,6 +19,8 @@ contract PartyPromises {
     event Donated(uint256);
     event PromiseAdded(bytes32 _title, string _description, uint8 _priority);
     event PromiseCompleted(bytes32 _title);
+    event Payback(address _address, uint256 _amount);
+    event DonationsReceived(address _address, uint256 _amount);
     event TimeExpired();
 
     // private variables
@@ -156,9 +158,58 @@ contract PartyPromises {
                 // transfer funds back to donor
                 require(donorAddresses[i].totalAmount >= balanceToPayback, "Insufficient funds to payback");
                 donorAddresses[i].transfer(balanceToPayback);
+                emit Payback(donorAddresses[i], balanceToPayback);
+                
             }
         }
         // wire all remaining funds to party
+        uint256 partyBalance = address(this).balance;
         owner.transfer(address(this).balance);
+        emit DonationsReceived(owner, partyBalance);
+    }
+
+    // getters
+    function GetDonorTotalAmount(address _donor) external view returns (uint256) {
+        return donors[_donor].totalAmount;
+    }
+
+    function GetDonorPromiseDonations(address _donor, bytes32 _promiseTitle) external view returns (uint256) {
+        return donors[_donor].promiseDonations[_promiseTitle];
+    }
+
+    function GetPromiseDescription(bytes32 _title) external view returns (string memory) {
+        return promises[_title].description;
+    }
+
+    function GetPromiseCompleted(bytes32 _title) external view returns (bool) {
+        return promises[_title].completed;
+    }
+
+    function GetDonorAddresses() external view returns (address[] memory) {
+        return donorAddresses;
+    }
+
+    function GetPromiseTitles() external view returns (bytes32[] memory) {
+        return promiseTitles;
+    }
+
+    function GetPartyBalance() external view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function GetOwner() external view returns (address) {
+        return owner;
+    }
+
+    function GetPartyName() external view returns (bytes32) {
+        return partyName;
+    }
+
+    function GetCreationTime() external view returns (uint256) {
+        return creationTime;
+    }
+
+    function GetExpirationTime() external view returns (uint256) {
+        return expirationTime;
     }
 }
