@@ -15,10 +15,10 @@ contract PartyPromises {
     }
 
     // events
-    event Donated(uint256);
     event PromiseAdded(bytes32 _title, string _description, uint8 _priority);
     event PromiseCompleted(bytes32 _title);
     event PromiseUncompleted(bytes32 _title);
+    event Donated(address _address, uint256 _amount);
     event Payback(address _address, uint256 _amount);
     event DonationsReceived(address _address, uint256 _amount);
     event TimeExpired();
@@ -44,7 +44,9 @@ contract PartyPromises {
         bytes32[] _promiseTitles, // optional
         string[] _descriptions // optional
     ) payable {
-        require(_promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal");
+        require(
+            _promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal"
+        );
         owner = msg.sender;
         partyName = _partyName;
         creationTime = block.timestamp;
@@ -76,6 +78,11 @@ contract PartyPromises {
         _;
     }
 
+    modifier notOwner() {
+        require(msg.sender != owner, "You are the owner");
+        _;
+    }
+
     modifier greaterZero() {
         require(msg.value > 0, "Value must be greater than zero");
         _;
@@ -86,13 +93,9 @@ contract PartyPromises {
         _;
     }
 
-    // payable default functions
-    receive() external payable greaterZero {
-        emit Donated(msg.value);
-    }
-
-    fallback() external payable greaterZero {
-        emit Donated(msg.value);
+    modifier notDonated() {
+        require(donors[msg.sender] == 0, "You are already a donor");
+        _;
     }
 
     /**
@@ -105,8 +108,8 @@ contract PartyPromises {
         external
         payable
         greaterZero
+        notDonated
     {
-        require(donors[msg.sender] == 0, "You are already a donor");
         require(
             _promiseTitles.length == _individualAmounts.length, "Length of promise titles and amounts must be equal"
         );
@@ -117,14 +120,7 @@ contract PartyPromises {
             donors[msg.sender].promiseDonations[_promiseTitles[i]] = _individualAmounts[i];
         }
 
-        emit Donated(msg.value);
-    }
-
-    /**
-     * Function to allow addresses to donate to the party anonymously NON-REFUNDABLE!!!
-     */
-    function DonateAnonymouslyNonRefundable() external payable greaterZero {
-        emit Donated(msg.value);
+        emit Donated(msg.sender, msg.value);
     }
 
     /**
@@ -143,7 +139,7 @@ contract PartyPromises {
      * Completes a promise. Only addresses verified by EAS will be allowed to call this function
      * @param _title - title of the promise
      */
-    function CompletePromise(bytes32 _title) external notExpired {
+    function CompletePromise(bytes32 _title) external notExpired notOwner {
         promises[_title].completed = true;
         emit PromiseCompleted(_title);
     }
