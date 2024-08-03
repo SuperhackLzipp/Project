@@ -189,16 +189,16 @@ contract PartyPromises {
     }
 
     // getters: donors
+    function GetDonorAddresses() external view returns (address[] memory) {
+        return donorAddresses;
+    }
+
     function GetDonorTotalAmount(address _donor) external view returns (uint256) {
         return donors[_donor].totalAmount;
     }
 
     function GetDonorPromiseDonations(address _donor, bytes32 _promiseTitle) external view returns (uint256) {
         return donors[_donor].promiseDonations[_promiseTitle];
-    }
-
-    function GetDonorAddresses() external view returns (address[] memory) {
-        return donorAddresses;
     }
 
     // getters: owner, partyName, creationTime, expirationTime
