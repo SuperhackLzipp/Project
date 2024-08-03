@@ -171,13 +171,13 @@ contract PartyPromises {
         emit DonationsReceived(owner, partyBalance);
     }
 
-    // getters
-    function GetDonorTotalAmount(address _donor) external view returns (uint256) {
-        return donors[_donor].totalAmount;
+    // getters: promises
+    function GetPromiseTitles() external view returns (bytes32[] memory) {
+        return promiseTitles;
     }
 
-    function GetDonorPromiseDonations(address _donor, bytes32 _promiseTitle) external view returns (uint256) {
-        return donors[_donor].promiseDonations[_promiseTitle];
+    function GetPromises() external view returns (mapping(bytes32 => Promise) memory) {
+        return promises;
     }
 
     function GetPromiseDescription(bytes32 _title) external view returns (string memory) {
@@ -188,14 +188,20 @@ contract PartyPromises {
         return promises[_title].completed;
     }
 
+    // getters: donors
+    function GetDonorTotalAmount(address _donor) external view returns (uint256) {
+        return donors[_donor].totalAmount;
+    }
+
+    function GetDonorPromiseDonations(address _donor, bytes32 _promiseTitle) external view returns (uint256) {
+        return donors[_donor].promiseDonations[_promiseTitle];
+    }
+
     function GetDonorAddresses() external view returns (address[] memory) {
         return donorAddresses;
     }
 
-    function GetPromiseTitles() external view returns (bytes32[] memory) {
-        return promiseTitles;
-    }
-
+    // getters: owner, partyName, creationTime, expirationTime
     function GetPartyBalance() external view returns (uint256) {
         return address(this).balance;
     }
