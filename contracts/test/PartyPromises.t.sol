@@ -85,4 +85,25 @@ contract PartyPromisesTest is Test {
         string description = partyPromises.getPromiseDescription(promiseTitle);
         assertEq(description, "Description 1");
     }
+
+    function test_GetPromiseCompleted() public {
+        bytes32 promiseTitle = "Promise 1".toBytes32();
+        partyPromises.addPromise(promiseTitle, "Description 1");
+
+        bool completed = partyPromises.getPromiseCompleted(promiseTitle);
+        assertEq(completed, false);
+
+        partyPromises.completePromise(promiseTitle);
+        completed = partyPromises.getPromiseCompleted(promiseTitle);
+        assertEq(completed, true);
+    }
+
+    /**
+     * The following tests will test all donation related functions
+     */
+    function
+
+    /**
+     * The following tests will test all donor related functions
+     */
 }
