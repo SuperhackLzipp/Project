@@ -17,6 +17,9 @@ contract PartyPromisesTest is Test {
         owner = address(this);
     }
 
+    /**
+     * The following tests will test all promise related functions
+     */
     function test_AddPromise() public {
         bytes32 promiseTitle = "Promise 1".toBytes32();
         partyPromises.addPromise(promiseTitle, "Description 1");
@@ -26,7 +29,7 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.promises(promiseTitle).completed, false);
     }
 
-    function test_completePromise() public {
+    function test_CompletePromise() public {
         bytes32 promiseTitle = "Promise 1".toBytes32();
         partyPromises.addPromise(promiseTitle, "Description 1");
 
@@ -35,5 +38,51 @@ contract PartyPromisesTest is Test {
 
         partyPromises.completePromise(promiseTitle);
         assertEq(partyPromises.promises(promiseTitle).completed, true);
+    }
+
+    function test_UncompletePromise() public {
+        bytes32 promiseTitle = "Promise 1".toBytes32();
+        partyPromises.addPromise(promiseTitle, "Description 1");
+
+        partyPromises.completePromise(promiseTitle);
+        assertEq(partyPromises.promises(promiseTitle).completed, true);
+
+        partyPromises.uncompletePromise(promiseTitle);
+        assertEq(partyPromises.promises(promiseTitle).completed, false);
+
+        partyPromises.uncompletePromise(promiseTitle);
+        assertEq(partyPromises.promises(promiseTitle).completed, false);
+    }
+
+    function test_GetPromiseTitles() public {
+        bytes32 promiseTitle1 = "Promise 1".toBytes32();
+        bytes32 promiseTitle2 = "Promise 2".toBytes32();
+        partyPromises.addPromise(promiseTitle1, "Description 1");
+        partyPromises.addPromise(promiseTitle2, "Description 2");
+
+        bytes32[] memory promiseTitles = partyPromises.getPromiseTitles();
+        assertEq(promiseTitles[0], promiseTitle1);
+        assertEq(promiseTitles[1], promiseTitle2);
+    }
+
+    function test_GetPromises() public {
+        bytes32 promiseTitle1 = "Promise 1".toBytes32();
+        bytes32 promiseTitle2 = "Promise 2".toBytes32();
+        partyPromises.addPromise(promiseTitle1, "Description 1");
+        partyPromises.addPromise(promiseTitle2, "Description 2");
+
+        mapping(bytes32 => PartyPromises.Promise) memory promises = partyPromises.getPromises();
+        assertEq(promises[promiseTitle1].description, "Description 1");
+        assertEq(promises[promiseTitle1].completed, false);
+        assertEq(promises[promiseTitle2].description, "Description 2");
+        assertEq(promises[promiseTitle2].completed, false);
+    }
+
+    function test_GetPromiseDescription() public {
+        bytes32 promiseTitle = "Promise 1".toBytes32();
+        partyPromises.addPromise(promiseTitle, "Description 1");
+
+        string description = partyPromises.getPromiseDescription(promiseTitle);
+        assertEq(description, "Description 1");
     }
 }
