@@ -63,7 +63,7 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.promises(promiseTitle).completed, true);
     }
 
-    function test_UnCompletePromise() public {
+    function test_UncompletePromise() public {
         bytes32 promiseTitle = "Promise 1".toBytes32();
         partyPromises.AddPromise(promiseTitle, "Description 1");
 
@@ -145,6 +145,8 @@ contract PartyPromisesTest is Test {
         partyPromises.DonateAnonymouslyNonRefundable{value: 1 ether}();
     }
 
+    function test_HandlePromiseFunds() {}
+
     /**
      * The following tests will test all donor-related functions
      */
@@ -163,4 +165,21 @@ contract PartyPromisesTest is Test {
         address[] addresses = partyPromises.GetDonorAddresses();
         assertEq(addresses[0], address(this));
     }
+
+    function test_GetDonorTotalAmount() public {}
+
+    function test_GetDonorPromiseDonations() public {}
+
+    /**
+     * The following tests will test all party-contract-related functions
+     */
+    function test_GetPartyBalance() public {}
+
+    function test_GetOwner() public {}
+
+    function test_GetPartyName() public {}
+
+    function test_GetCreationTime() public {}
+
+    function test_GetExpirationTime() public {}
 }
