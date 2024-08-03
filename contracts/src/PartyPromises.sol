@@ -2,13 +2,6 @@
 pragma solidity ^0.8.20;
 
 contract PartyPromises {
-    // constructor
-    constructor(bytes32 _partyName, uint256 _expirationTime) payable {
-        partyName = _partyName;
-        creationTime = block.timestamp;
-        expirationTime = _expirationTime;
-    }
-
     // Struct for storing a donator
     struct Donor {
         uint256 totalAmount;
@@ -31,17 +24,41 @@ contract PartyPromises {
     event TimeExpired();
 
     // private variables
-    mapping(address => Donor) private   donors; // mapping of donors
-    address[] private                   donorAddresses; // list of donor addresses
+    mapping(address => Donor) private donors;
+    address[] private donorAddresses;
 
     // public variables
-    address public immutable            owner; // owner of the contract
-    bytes32 public immutable            partyName; // name of the party
-    uint256 public immutable            creationTime; // time of creation (dd/mm/yyyy)
-    uint256 public immutable            expirationTime; // time of expiration (dd/mm/yyyy)
-    string public immutable             partyProgramURL; // URL to the party program in IPFS
-    mapping(bytes32 => Promise) public  promises; // mapping of promises
-    bytes32[] public                    promiseTitles; // list of promise titles
+    address public immutable owner;
+    bytes32 public immutable partyName;
+    uint256 public immutable creationTime; // (dd/mm/yyyy)
+    uint256 public immutable expirationTime; // (dd/mm/yyyy)
+    string public immutable partyProgramURL;
+    mapping(bytes32 => Promise) public promises;
+    bytes32[] public promiseTitles;
+
+    // constructor
+    constructor(
+        bytes32 _partyName,
+        uint256 _expirationTime,
+        string _partyProgramURL,
+        bytes32[] _promiseTitles, // optional
+        string[] _descriptions // optional
+    ) payable {
+        require(_promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal");
+        owner = msg.sender;
+        partyName = _partyName;
+        creationTime = block.timestamp;
+        expirationTime = _expirationTime;
+        partyProgramURL = bytes(_partyProgramURL).length > 0 ? _partyProgramURL : "Not set";
+        if (_promiseTitles.length == 0) {
+            return;
+        }
+        promiseTitles = _promiseTitles;
+        for (uint256 i = 0; i < _promiseTitles.length; i++) {
+            promises[_promiseTitles[i]].description = _descriptions[i];
+            promises[_promiseTitles[i]].completed = false;
+        }
+    }
 
     // modifiers
     modifier notExpired() {
@@ -104,8 +121,7 @@ contract PartyPromises {
     }
 
     /**
-     * Function to allow addresses to donate to the party anonymously
-     * NON-REFUNDABLE!!!
+     * Function to allow addresses to donate to the party anonymously NON-REFUNDABLE!!!
      */
     function DonateAnonymouslyNonRefundable() external payable greaterZero {
         emit Donated(msg.value);
@@ -147,28 +163,25 @@ contract PartyPromises {
      */
     function HandlePromiseFunds() external isOwner isExpired {
         uint256 balanceToPayback;
-        uint256 iLen = donorAddresses.length;
-        uint256 jLen = promiseTitles.length;
         // for loop for handling every single donor
-        for (uint256 i = 0; i < len; i++) {
+        for (uint256 i = 0; i < donorAddresses.length; i++) {
             balanceToPayback = 0;
             // for loop for every single promise
-            for (uint256 j = 0; j < jLen; j++) {
+            for (uint256 j = 0; j < promiseTitles.length; j++) {
                 if (
                     donors[donorAddresses[i]].promiseDonations[promiseTitles[j]] != 0
-                        && promises[promiseTitles[j]].completed == false
+                        && promises[promiseTitles[j]].completed == true
                 ) {
                     balanceToPayback += donors[donorAddresses[i]].promiseDonations[promiseTitles[j]];
                 }
-                // transfer funds back to donor
-                require(donorAddresses[i].totalAmount >= balanceToPayback, "Insufficient funds to payback");
-                if (balanceToPayback < donorAddresses[i].totalAmount) {
-                    donorAddresses[i].transfer(balanceToPayback);
-                } else {
-                    donorAddresses[i].transfer(donorAddresses[i].totalAmount);
-                }
-                emit Payback(donorAddresses[i], balanceToPayback);
             }
+            // transfer funds back to donor
+            if (balanceToPayback < donorAddresses[i].totalAmount) {
+                donorAddresses[i].transfer(balanceToPayback);
+            } else {
+                donorAddresses[i].transfer(donorAddresses[i].totalAmount);
+            }
+            emit Payback(donorAddresses[i], balanceToPayback);
         }
         // wire all remaining funds to party
         uint256 partyBalance = address(this).balance;
