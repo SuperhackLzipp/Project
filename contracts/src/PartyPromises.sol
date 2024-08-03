@@ -10,7 +10,7 @@ contract PartyPromises {
     }
 
     // Struct for storing a donator
-    struct Donator {
+    struct Donor {
         uint256 totalAmount;
         mapping(bytes32 => uint256) promiseDonations; // list of promises the donator chooses to donate to
     }
@@ -31,16 +31,17 @@ contract PartyPromises {
     event TimeExpired();
 
     // private variables
-    mapping(address => Donator) private donors; // mapping of donors
-    address[] private donorAddresses; // list of donor addresses
+    mapping(address => Donor) private   donors; // mapping of donors
+    address[] private                   donorAddresses; // list of donor addresses
 
     // public variables
-    address public immutable owner; // owner of the contract
-    bytes32 public immutable partyName; // name of the party
-    uint256 public immutable creationTime; // time of creation (dd/mm/yyyy)
-    uint256 public immutable expirationTime; // time of expiration (dd/mm/yyyy)
-    mapping(bytes32 => Promise) public promises; // mapping of promises
-    bytes32[] public promiseTitles; // list of promise titles
+    address public immutable            owner; // owner of the contract
+    bytes32 public immutable            partyName; // name of the party
+    uint256 public immutable            creationTime; // time of creation (dd/mm/yyyy)
+    uint256 public immutable            expirationTime; // time of expiration (dd/mm/yyyy)
+    string public immutable             partyProgramURL; // URL to the party program in IPFS
+    mapping(bytes32 => Promise) public  promises; // mapping of promises
+    bytes32[] public                    promiseTitles; // list of promise titles
 
     // modifiers
     modifier notExpired() {
@@ -161,7 +162,11 @@ contract PartyPromises {
                 }
                 // transfer funds back to donor
                 require(donorAddresses[i].totalAmount >= balanceToPayback, "Insufficient funds to payback");
-                donorAddresses[i].transfer(balanceToPayback);
+                if (balanceToPayback < donorAddresses[i].totalAmount) {
+                    donorAddresses[i].transfer(balanceToPayback);
+                } else {
+                    donorAddresses[i].transfer(donorAddresses[i].totalAmount);
+                }
                 emit Payback(donorAddresses[i], balanceToPayback);
             }
         }
@@ -197,8 +202,8 @@ contract PartyPromises {
         return donors[_donor].totalAmount;
     }
 
-    function GetDonorPromiseDonations(address _donor, bytes32 _promiseTitle) external view returns (uint256) {
-        return donors[_donor].promiseDonations[_promiseTitle];
+    function GetDonorPromiseDonations(address _donor) external view returns (uint256) {
+        return donors[_donor].promiseDonations;
     }
 
     // getters: owner, partyName, creationTime, expirationTime
