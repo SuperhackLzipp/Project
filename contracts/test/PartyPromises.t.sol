@@ -130,14 +130,15 @@ contract PartyPromisesTest is Test {
 
     function test_CompletePromise() public {
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), true);
+        vm.stopPrank();
     }
 
     function test_UncompletePromise() public {
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), true);
 
@@ -179,7 +180,7 @@ contract PartyPromisesTest is Test {
         assertEq(completed, false);
 
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         vm.stopPrank();
 
@@ -244,10 +245,8 @@ contract PartyPromisesTest is Test {
 
         partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, _amounts);
 
-        console.log("test balance: ", address(this).balance);
-        console.log("test party balance: ", partyPromises.GetPartyBalance());
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         vm.stopPrank();
 
@@ -275,7 +274,7 @@ contract PartyPromisesTest is Test {
         partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, _amounts);
 
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         partyPromises.CompletePromise(promiseTitle2);
         vm.stopPrank();
@@ -289,7 +288,7 @@ contract PartyPromisesTest is Test {
         vm.warp(creationTime + 1 days);
 
         address validatorAddress = address(0x123);
-        vm.prank(validatorAddress);
+        vm.startPrank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
         vm.stopPrank();
 
@@ -298,7 +297,7 @@ contract PartyPromisesTest is Test {
 
     function testFail_HandlePromiseFundsCalledByWrongAddress() public {
         address unauthorizedAddress = address(0x123);
-        vm.prank(unauthorizedAddress);
+        vm.startPrank(unauthorizedAddress);
 
         partyPromises.HandlePromiseFunds();
     }
@@ -350,34 +349,25 @@ contract PartyPromisesTest is Test {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
 
-        console.log("0");
         bytes32[] memory _promiseTitles = new bytes32[](2);
         _promiseTitles = new bytes32[](2);
         _promiseTitles[0] = promiseTitle1;
         _promiseTitles[1] = promiseTitle2;
 
-        console.log("0.5");
         uint256[] memory _amounts = new uint256[](2);
         _amounts = new uint256[](2);
         _amounts[0] = amount1;
         _amounts[1] = amount2;
-        console.log("0.75");
 
         partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, _amounts);
 
-        console.log("0.9");
         bytes32[] memory _promiseTitles2;
         uint256[] memory _promiseDonations;
         (_promiseTitles2, _promiseDonations) = partyPromises.GetDonorPromiseDonations(address(this));
-        console.log("0.95");
 
-        console.log("1");
         assertEq(_promiseTitles2[0], promiseTitle1);
-        console.log("2");
         assertEq(_promiseDonations[0], amount1);
-        console.log("3");
         assertEq(_promiseTitles2[1], promiseTitle2);
-        console.log("4");
         assertEq(_promiseDonations[1], amount2);
     }
 
