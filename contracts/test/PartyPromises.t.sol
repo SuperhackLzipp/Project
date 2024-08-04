@@ -18,6 +18,10 @@ contract PartyPromisesTest is Test {
     string[] public descriptions;
     string public url;
 
+    receive() external payable {}
+
+    fallback() external payable {}
+
     function setUp() public {
         partyName = "Example Party";
         creationTime = uint32(block.timestamp);
@@ -104,7 +108,6 @@ contract PartyPromisesTest is Test {
      */
     function testFail_SendEthAnonymously() public {
         (bool success, ) = address(partyPromises).call{value: 1 ether}("");
-        console.log("success: ", success);
         require(success, "Call should have failed");
     }
 
@@ -241,8 +244,14 @@ contract PartyPromisesTest is Test {
 
         partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, _amounts);
 
+        console.log("test balance: ", address(this).balance);
+        console.log("test party balance: ", partyPromises.GetPartyBalance());
+        address validatorAddress = address(0x123);
+        vm.prank(validatorAddress);
         partyPromises.CompletePromise(promiseTitle1);
-        vm.warp(creationTime + 2 days);
+        vm.stopPrank();
+
+        vm.warp(expirationTime + 1 days);
 
         partyPromises.HandlePromiseFunds();
         assertEq(partyPromises.GetPartyBalance(), 2 ether);

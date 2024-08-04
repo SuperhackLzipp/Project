@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.20;
 
+import "forge-std/console.sol";
+
 contract PartyPromises {
     // Struct for storing a donator
     struct Donor {
@@ -159,13 +161,16 @@ contract PartyPromises {
      * Withdraws the adequate amount of funds from the contract for every promise completed
      * For every promise not completed, the funds will be sent back to the donors
      */
-    function HandlePromiseFunds() external isOwner isExpired {
+    function HandlePromiseFunds() external payable isOwner isExpired {
         uint256 balanceToPayback;
         // for loop for handling every single donor
         for (uint256 i = 0; i < donorAddresses.length; i++) {
             balanceToPayback = 0;
             // for loop for every single promise
+            console.log("donor address: ", donorAddresses[i]);
             for (uint256 j = 0; j < promiseTitles.length; j++) {
+                console.log("promise title: ", j);
+                console.log(donors[donorAddresses[i]].promiseDonations[promiseTitles[j]]);
                 if (
                     donors[donorAddresses[i]].promiseDonations[promiseTitles[j]] != 0
                         && promises[promiseTitles[j]].completed == true
@@ -174,17 +179,31 @@ contract PartyPromises {
                 }
             }
             // transfer funds back to donor
+            console.log("balance to payback: ", balanceToPayback);
+            bool success;
             if (balanceToPayback < donors[donorAddresses[i]].totalAmount) {
-                donorAddresses[i].transfer(balanceToPayback);
+                console.log("triggered 1");
+                success = payable(donorAddresses[i]).send(balanceToPayback);
+                console.log("success: ", success);
             } else {
-                donorAddresses[i].transfer(donors[donorAddresses[i]].totalAmount);
+                console.log("triggered 2");
+                success = payable(donorAddresses[i]).send(donors[donorAddresses[i]].totalAmount);
+                console.log("success: ", success);
             }
+            // require(success, "Transfer failed");
+            console.log("payed back: ", balanceToPayback);
             emit Payback(donorAddresses[i], balanceToPayback);
         }
         // wire all remaining funds to party
         uint256 partyBalance = address(this).balance;
-        owner.transfer(address(this).balance);
-        emit DonationsReceived(owner, partyBalance);
+        console.log("party balance: ", partyBalance);
+        if (partyBalance <= 21000) {
+            emit DonationsReceived(owner, 0);
+        } else {
+            owner.transfer(address(this).balance - 21000);
+            emit DonationsReceived(owner, partyBalance);
+        }
+        // console.log("party balance after transfer: ", address(this).balance);
     }
 
     // getters: promises
@@ -221,7 +240,7 @@ contract PartyPromises {
 
     // TODO: out of bounds error
     function GetDonorPromiseDonations(address _donor) external view returns (bytes32[] memory, uint256[] memory) {
-        uint256[] memory amounts;
+        uint256[] memory amounts = new uint256[](donors[_donor].promiseTitles.length);
         for (uint256 i = 0; i < donors[_donor].promiseTitles.length; i++) {
             amounts[i] = donors[_donor].promiseDonations[donors[_donor].promiseTitles[i]];
         }
