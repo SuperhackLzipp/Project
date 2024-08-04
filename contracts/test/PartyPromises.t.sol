@@ -111,32 +111,33 @@ contract PartyPromisesTest is Test {
      * The following tests will test all promise-related functions
      */
     function test_AddPromise() public {
-        bytes32 promiseTitle = "Promise3";
-        string memory description = "Description 3";
-        partyPromises.AddPromise(promiseTitle, description);
+        bytes32 _promiseTitle = "Promise3";
+        string memory _description = "Description 3";
+        partyPromises.AddPromise(_promiseTitle, _description);
 
-        assertEq(partyPromises.promiseTitles(2), promiseTitle);
-        assertEq(partyPromises.promises(promiseTitle).description, description1);
-        assertEq(partyPromises.promises(promiseTitle).completed, false);
+        bytes32[] memory _promiseTitles;
+        string[] memory _descriptions;
+        bool[] memory _completions;
+        (_promiseTitles, _descriptions, _completions) = partyPromises.GetPromises();
+        assertEq(_promiseTitles[2], _promiseTitle);
+        assertEq(_descriptions[2], _description);
+        assertEq(_completions[2], false);
     }
 
     function test_CompletePromise() public {
         partyPromises.CompletePromise(promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).completed, true);
-
-        partyPromises.CompletePromise(promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).completed, true);
+        assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), true);
     }
 
     function test_UncompletePromise() public {
         partyPromises.CompletePromise(promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).completed, true);
+        assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), true);
 
         partyPromises.UncompletePromise(promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).completed, false);
+        assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), false);
 
         partyPromises.UncompletePromise(promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).completed, false);
+        assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), false);
     }
 
     function test_GetPromiseTitles() public {
@@ -236,7 +237,7 @@ contract PartyPromisesTest is Test {
         uint256 amount2 = 2 ether;
         bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.donate(amount1 + amount2, _promiseTitles, amounts);
+        partyPromises.Donate(amount1 + amount2, _promiseTitles, amounts);
 
         address[] memory addresses = partyPromises.GetDonorAddresses();
         assertEq(addresses[0], address(this));
@@ -247,7 +248,7 @@ contract PartyPromisesTest is Test {
         uint256 amount2 = 2 ether;
         bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.donate(amount1 + amount2, _promiseTitles, amounts);
+        partyPromises.Donate(amount1 + amount2, _promiseTitles, amounts);
 
         uint256 totalAmount = partyPromises.GetDonorTotalAmount(address(this));
         assertEq(totalAmount, amount1 + amount2);
