@@ -173,7 +173,7 @@ contract PartyPromises {
                 console.log(donors[donorAddresses[i]].promiseDonations[promiseTitles[j]]);
                 if (
                     donors[donorAddresses[i]].promiseDonations[promiseTitles[j]] != 0
-                        && promises[promiseTitles[j]].completed == true
+                        && promises[promiseTitles[j]].completed == false
                 ) {
                     balanceToPayback += donors[donorAddresses[i]].promiseDonations[promiseTitles[j]];
                 }

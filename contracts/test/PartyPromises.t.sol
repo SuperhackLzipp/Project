@@ -254,8 +254,8 @@ contract PartyPromisesTest is Test {
         vm.warp(expirationTime + 1 days);
 
         partyPromises.HandlePromiseFunds();
-        assertEq(partyPromises.GetPartyBalance(), 2 ether);
-        assertEq(address(this).balance, 99 ether);
+        assertApproxEqAbs(partyPromises.GetPartyBalance(), 0, 21000);
+        assertApproxEqAbs(address(this).balance, 100 ether, 21000);
     }
 
     function test_HandlePromiseFundsAllCompleted() public {
