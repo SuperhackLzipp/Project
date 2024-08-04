@@ -153,6 +153,16 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.donors(address(this)).promiseDonations(promiseTitle2), amount2);
     }
 
+    function testFail_DonatedAlready() public {
+        uint256 amount1 = 1 ether;
+        uint256 amount2 = 2 ether;
+        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        uint256[] memory amounts = [amount1, amount2];
+
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+    }
+
     function test_HandlePromiseFundsOneCompleted() {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
@@ -177,9 +187,16 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.GetPartyBalance(), 0);
     }
 
-    function testFail_HandlePromiseFunds() {
+    function testFail_HandlePromiseFundsTooEarly() {
+        vm.warp(creationTime + 1 days);
         partyPromises.CompletePromise(promiseTitle1);
-        vm.warp(creationTime + 2 days);
+    }
+
+    function testFail_HandlePromiseFundsCalledByWrongAddress() public {
+        address unauthorizedAddress = address(0x123);
+        vm.prank(unauthorizedAddress);
+
+        partyPromises.HandlePromiseFunds();
     }
 
     /**
