@@ -12,20 +12,62 @@ contract PartyPromisesTest is Test {
     address public owner;
     bytes32 public promiseTitle1;
     bytes32 public promiseTitle2;
+    string public description1;
+    string public description2;
+    string public url;
 
     function setUp() public {
         partyName = "Example Party".toBytes32();
         creationTime = block.timestamp;
         expirationTime = creationTime + 1 days;
-        partyPromises = new PartyPromises(partyName, creationTime, expirationTime);
         owner = address(this);
         promiseTitle1 = "Promise1".toBytes32();
         promiseTitle2 = "Promise2".toBytes32();
+        description1 = "Description 1";
+        description2 = "Description 2";
+        url = "https://example.com";
+        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        string[] memory descriptions = [description1, description2];
+
+        partyPromises = new PartyPromises(
+            partyName, creationTime, expirationTime, url, promiseTitles, descriptions
+        );
 
         vm.deal(address(this), 100 ether);
+    }
 
-        partyPromises.AddPromise(promiseTitle1, "Description 1");
-        partyPromises.AddPromise(promiseTitle2, "Description 2");
+    /**
+     * The following tests will test the constructor
+     */
+    function test_Constructor() public {
+        assertEq(partyPromises.owner(), address(this));
+        assertEq(partyPromises.partyName(), partyName);
+        assertEq(partyPromises.creationTime(), creationTime);
+        assertEq(partyPromises.expirationTime(), expirationTime);
+        assertEq(partyPromises.partyProgramURL(), url);
+        assertEq(partyPromises.promiseTitles(0), promiseTitle1);
+        assertEq(partyPromises.promiseTitles(1), promiseTitle2);
+        assertEq(partyPromises.promises(promiseTitle1).description, description1);
+        assertEq(partyPromises.promises(promiseTitle2).description, description2);
+    }
+
+    function test_ConstructorNoArgs() public {
+        PartyPromises memory partypromises2 = new PartyPromises(
+            partyName, creationTime, expirationTime, "", [], []
+        );
+
+        assertEq(partypromises2.owner(), address(this));
+        assertEq(partypromises2.partyName(), partyName);
+        assertEq(partypromises2.creationTime(), creationTime);
+        assertEq(partypromises2.expirationTime(), expirationTime);
+        assertEq(partypromises2.partyProgramURL(), "Not set".toBytes32());
+        assertEq(partypromises2.promiseTitles.length, 0);
+    }
+
+    function testFail_ConstructorDifferentLengths() public {
+        bytes32[] memory promiseTitles = [promiseTitle1];
+        string[] memory descriptions = [description1, description2];
+        new PartyPromises(partyName, creationTime, expirationTime, url, promiseTitles, descriptions);
     }
 
     /**
@@ -33,16 +75,20 @@ contract PartyPromisesTest is Test {
      */
     function testFail_SendEthAnonymously() public {
         (bool success,) = address(partyPromises).call{value: 1 ether}("");
-        require(!success, "Ether transfer failed");
+        require(!success, "Ether transfer should fail");
     }
 
     /**
      * The following tests will test all promise-related functions
      */
     function test_AddPromise() public {
-        assertEq(partyPromises.promiseTitles(0), promiseTitle1);
-        assertEq(partyPromises.promises(promiseTitle1).description, "Description 1");
-        assertEq(partyPromises.promises(promiseTitle1).completed, false);
+        bytes32 promiseTitle = "Promise3".toBytes32();
+        string memory description = "Description 3";
+        partyPromises.AddPromise(promiseTitle, description);
+
+        assertEq(partyPromises.promiseTitles(2), promiseTitle);
+        assertEq(partyPromises.promises(promiseTitle).description, description1);
+        assertEq(partyPromises.promises(promiseTitle).completed, false);
     }
 
     function test_CompletePromise() public {
@@ -72,15 +118,15 @@ contract PartyPromisesTest is Test {
 
     function test_GetPromises() public {
         mapping(bytes32 => PartyPromises.Promise) memory promises = partyPromises.getPromises();
-        assertEq(promises[promiseTitle1].description, "Description 1");
+        assertEq(promises[promiseTitle1].description, description1);
         assertEq(promises[promiseTitle1].completed, false);
-        assertEq(promises[promiseTitle2].description, "Description 2");
+        assertEq(promises[promiseTitle2].description, description2);
         assertEq(promises[promiseTitle2].completed, false);
     }
 
     function test_GetPromiseDescription() public {
         string description = partyPromises.GetPromiseDescription(promiseTitle);
-        assertEq(description, "Description 1");
+        assertEq(description, description1);
     }
 
     function test_GetPromiseCompleted() public {
