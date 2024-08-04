@@ -51,27 +51,52 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.creationTime(), creationTime);
         assertEq(partyPromises.GetExpirationTime(), expirationTime);
         assertEq(partyPromises.GetPartyProgramURL(), url);
+        assertEq(partyPromises.GetPartyBalance(), 0);
 
         bytes32[] memory _promiseTitles = partyPromises.GetPromiseTitles();
-        assertEq(_promiseTitles);
-        assertEq(partyPromises.promiseTitles(1), promiseTitle2);
-        assertEq(partyPromises.promises[promiseTitle1].description, description1);
-        assertEq(partyPromises.promises[promiseTitle2].description, description2);
+        assertEq(_promiseTitles[0], promiseTitle1);
+        assertEq(_promiseTitles[1], promiseTitle2);
+
+        string[] memory _descriptions;
+        bool[] memory _completions;
+        (_promiseTitles, _descriptions, _completions) = partyPromises.GetPromises();
+        assertEq(_promiseTitles[0], promiseTitle1);
+        assertEq(_promiseTitles[1], promiseTitle2);
+        assertEq(_descriptions[0], description1);
+        assertEq(_descriptions[1], description2);
+        assertEq(_completions[0], false);
+        assertEq(_completions[1], false);
     }
 
     function test_ConstructorNoArgs() public {
-        PartyPromises partypromises2 = new PartyPromises(partyName, creationTime, expirationTime, "", [], []);
+        PartyPromises partyPromises2 = new PartyPromises(partyName, expirationTime, "", new bytes32[](0), new string[](0));
 
-        assertEq(partypromises2.owner(), address(this));
-        assertEq(partypromises2.partyName(), partyName);
-        assertEq(partypromises2.creationTime(), creationTime);
-        assertEq(partypromises2.expirationTime(), expirationTime);
-        assertEq(partypromises2.partyProgramURL(), "Not set");
-        assertEq(partypromises2.promiseTitles.length, 0);
+        assertEq(partyPromises2.GetOwner(), address(this));
+        assertEq(partyPromises2.GetPartyName(), partyName);
+        assertEq(partyPromises2.creationTime(), creationTime);
+        assertEq(partyPromises2.GetExpirationTime(), expirationTime);
+        assertEq(partyPromises2.GetPartyProgramURL(), "Not set");
+        assertEq(partyPromises2.GetPartyBalance(), 0);
+
+        bytes32[] memory _promiseTitles = partyPromises2.GetPromiseTitles();
+        assertEq(_promiseTitles.length, 0);
+
+        string[] memory _descriptions;
+        bool[] memory _completions;
+        (_promiseTitles, _descriptions, _completions) = partyPromises2.GetPromises();
+        assertEq(_promiseTitles.length, 0);
+        assertEq(_descriptions.length, 0);
+        assertEq(_completions.length, 0);
     }
 
     function testFail_ConstructorDifferentLengths() public {
-        new PartyPromises(partyName, creationTime, expirationTime, url, [promiseTitle1], [description1, description2]);
+        bytes32[] memory _promiseTitles = new bytes32[](1);
+        _promiseTitles[0] = promiseTitle1;
+
+        string[] memory _descriptions = new string[](2);
+        _descriptions[0] = description1;
+        _descriptions[1] = description2;
+        new PartyPromises(partyName, expirationTime, url, _promiseTitles, _descriptions);
     }
 
     /**
@@ -121,7 +146,7 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetPromises() public {
-        mapping(bytes32 => PartyPromises.Promise) memory promises = partyPromises.getPromises();
+        mapping(bytes32 => PartyPromises.Promise) memory promises = partyPromises.GetPromises();
         assertEq(promises[promiseTitle1].description, description1);
         assertEq(promises[promiseTitle1].completed, false);
         assertEq(promises[promiseTitle2].description, description2);
