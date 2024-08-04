@@ -147,16 +147,22 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetPromises() public {
-        mapping(bytes32 => PartyPromises.Promise) memory promises = partyPromises.GetPromises();
-        assertEq(promises[promiseTitle1].description, description1);
-        assertEq(promises[promiseTitle1].completed, false);
-        assertEq(promises[promiseTitle2].description, description2);
-        assertEq(promises[promiseTitle2].completed, false);
+        bytes32[] memory _promiseTitles;
+        string[] memory _descriptions;
+        bool[] memory _completions;
+        (_promiseTitles, _descriptions, _completions) = partyPromises.GetPromises();
+
+        assertEq(_promiseTitles[0], promiseTitle1);
+        assertEq(_descriptions[0], description1);
+        assertEq(_completions[0], false);
+        assertEq(_promiseTitles[1], promiseTitle2);
+        assertEq(_descriptions[1], description2);
+        assertEq(_completions[1], false);
     }
 
     function test_GetPromiseDescription() public {
-        string memory description = partyPromises.GetPromiseDescription(promiseTitle1);
-        assertEq(description, description1);
+        string memory _description = partyPromises.GetPromiseDescription(promiseTitle1);
+        assertEq(_description, description1);
     }
 
     function test_GetPromiseCompleted() public {
