@@ -17,12 +17,12 @@ contract PartyPromisesTest is Test {
     string public url;
 
     function setUp() public {
-        partyName = "Example Party".toBytes32();
+        partyName = "Example Party";
         creationTime = block.timestamp;
         expirationTime = creationTime + 1 days;
         owner = address(this);
-        promiseTitle1 = "Promise1".toBytes32();
-        promiseTitle2 = "Promise2".toBytes32();
+        promiseTitle1 = "Promise1";
+        promiseTitle2 = "Promise2";
         description1 = "Description 1";
         description2 = "Description 2";
         url = "https://example.com";
@@ -52,7 +52,7 @@ contract PartyPromisesTest is Test {
     }
 
     function test_ConstructorNoArgs() public {
-        PartyPromises memory partypromises2 = new PartyPromises(
+        PartyPromises partypromises2 = new PartyPromises(
             partyName, creationTime, expirationTime, "", [], []
         );
 
@@ -60,7 +60,7 @@ contract PartyPromisesTest is Test {
         assertEq(partypromises2.partyName(), partyName);
         assertEq(partypromises2.creationTime(), creationTime);
         assertEq(partypromises2.expirationTime(), expirationTime);
-        assertEq(partypromises2.partyProgramURL(), "Not set".toBytes32());
+        assertEq(partypromises2.partyProgramURL(), "Not set");
         assertEq(partypromises2.promiseTitles.length, 0);
     }
 
@@ -82,7 +82,7 @@ contract PartyPromisesTest is Test {
      * The following tests will test all promise-related functions
      */
     function test_AddPromise() public {
-        bytes32 promiseTitle = "Promise3".toBytes32();
+        bytes32 promiseTitle = "Promise3";
         string memory description = "Description 3";
         partyPromises.AddPromise(promiseTitle, description);
 
@@ -125,16 +125,16 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetPromiseDescription() public {
-        string description = partyPromises.GetPromiseDescription(promiseTitle);
+        string memory description = partyPromises.GetPromiseDescription(promiseTitle1);
         assertEq(description, description1);
     }
 
     function test_GetPromiseCompleted() public {
-        bool completed = partyPromises.GetPromiseCompleted(promiseTitle);
+        bool completed = partyPromises.GetPromiseCompleted(promiseTitle1);
         assertEq(completed, false);
 
-        partyPromises.CompletePromise(promiseTitle);
-        completed = partyPromises.GetPromiseCompleted(promiseTitle);
+        partyPromises.CompletePromise(promiseTitle1);
+        completed = partyPromises.GetPromiseCompleted(promiseTitle1);
         assertEq(completed, true);
     }
 
@@ -163,7 +163,7 @@ contract PartyPromisesTest is Test {
         partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
     }
 
-    function test_HandlePromiseFundsOneCompleted() {
+    function test_HandlePromiseFundsOneCompleted() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
         bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
@@ -178,7 +178,7 @@ contract PartyPromisesTest is Test {
         assertEq(address(this).balance, 98 ether);
     }
 
-    function test_HandlePromiseFundsAllCompleted() {
+    function test_HandlePromiseFundsAllCompleted() public {
         partyPromises.CompletePromise(promiseTitle1);
         partyPromises.CompletePromise(promiseTitle2);
         vm.warp(creationTime + 2 days);
@@ -187,7 +187,7 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.GetPartyBalance(), 0);
     }
 
-    function testFail_HandlePromiseFundsTooEarly() {
+    function testFail_HandlePromiseFundsTooEarly() public{
         vm.warp(creationTime + 1 days);
         partyPromises.CompletePromise(promiseTitle1);
     }
@@ -209,7 +209,7 @@ contract PartyPromisesTest is Test {
         uint256[] memory amounts = [amount1, amount2];
         partyPromises.donate(amount1 + amount2, promiseTitles, amounts);
 
-        address[] addresses = partyPromises.GetDonorAddresses();
+        address[] memory addresses = partyPromises.GetDonorAddresses();
         assertEq(addresses[0], address(this));
     }
 
@@ -225,7 +225,7 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetDonorPromiseDonations() public {
-        mapping(bytes32 => uint256) promiseDonations = partyPromises.GetDonorPromiseDonations(address(this));
+        mapping(bytes32 => uint256) memory promiseDonations = partyPromises.GetDonorPromiseDonations(address(this));
     }
 
     /**
@@ -241,7 +241,7 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetPartyName() public {
-        assertEq(partyPromises.GetPartyName(), "Example Party".toBytes32());
+        assertEq(partyPromises.GetPartyName(), "Example Party");
     }
 
     function test_GetCreationTime() public {

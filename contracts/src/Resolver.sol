@@ -5,16 +5,17 @@ import "@ethereum-attestation-service/eas-contracts/contracts/resolver/SchemaRes
 
 contract ComplaintResolver is SchemaResolver {
     bytes32 public immutable partyName;
-    bytes32[] private immutable validAttestersHashed;
+    bytes32[] private validAttestersHashed;
 
-    constructor(IEAS eas, bytes32 _partyName, bytes32[] calldata _validAttestersHashed) SchemaResolver(eas) {
+    constructor(IEAS eas, bytes32 _partyName, bytes32[] memory _validAttestersHashed) SchemaResolver(eas) {
         partyName = _partyName;
         validAttestersHashed = _validAttestersHashed;
     }
 
     function onAttest(Attestation calldata attestation, uint256 /*value*/ ) internal view override returns (bool) {
-        for (uint256 i = 0; i < validAttesters.length; i++) {
-            if (hash.keccak256(attestation.attester) == validAttestersHashed[i]) {
+        bytes32 attesterHash = keccak256(abi.encodePacked(attestation.attester));
+        for (uint256 i = 0; i < validAttestersHashed.length; i++) {
+            if (attesterHash == validAttestersHashed[i]) {
                 return true;
             }
         }

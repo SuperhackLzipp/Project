@@ -5,7 +5,8 @@ contract PartyPromises {
     // Struct for storing a donator
     struct Donor {
         uint256 totalAmount;
-        mapping(bytes32 => uint256) promiseDonations; // list of promises the donator chooses to donate to
+        bytes32[] promiseTitles; // list of promises the donator chooses to donate to
+        mapping(bytes32 => uint256) promiseDonations; // promise titles && donated amounts
     }
 
     // Struct for storing a promise
@@ -15,7 +16,7 @@ contract PartyPromises {
     }
 
     // events
-    event PromiseAdded(bytes32 _title, string _description, uint8 _priority);
+    event PromiseAdded(bytes32 _title, string _description);
     event PromiseCompleted(bytes32 _title);
     event PromiseUncompleted(bytes32 _title);
     event Donated(address _address, uint256 _amount);
@@ -25,14 +26,14 @@ contract PartyPromises {
 
     // private variables
     mapping(address => Donor) private donors;
-    address[] private donorAddresses;
+    address payable[] private donorAddresses;
 
     // public variables
-    address public immutable owner;
+    address payable public immutable owner;
     bytes32 public immutable partyName;
     uint256 public immutable creationTime; // (dd/mm/yyyy)
     uint256 public immutable expirationTime; // (dd/mm/yyyy)
-    string public immutable partyProgramURL;
+    string public partyProgramURL;
     mapping(bytes32 => Promise) public promises;
     bytes32[] public promiseTitles;
 
@@ -40,14 +41,14 @@ contract PartyPromises {
     constructor(
         bytes32 _partyName,
         uint256 _expirationTime,
-        string _partyProgramURL,
-        bytes32[] _promiseTitles, // optional
-        string[] _descriptions // optional
+        string memory _partyProgramURL,
+        bytes32[] memory _promiseTitles, // optional
+        string[] memory _descriptions // optional
     ) {
         require(
             _promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal"
         );
-        owner = msg.sender;
+        owner = payable(msg.sender);
         partyName = _partyName;
         creationTime = block.timestamp;
         expirationTime = _expirationTime;
@@ -89,12 +90,12 @@ contract PartyPromises {
     }
 
     modifier nonexistant(bytes32 _title) {
-        require(promises[_title] == 0, "Promise already exists");
+        require(bytes(promises[_title].description).length == 0, "Promise already exists");
         _;
     }
 
     modifier notDonated() {
-        require(donors[msg.sender] == 0, "You are already a donor");
+        require(donors[msg.sender].totalAmount == 0, "You are already a donor");
         _;
     }
 
@@ -114,8 +115,9 @@ contract PartyPromises {
             _promiseTitles.length == _individualAmounts.length, "Length of promise titles and amounts must be equal"
         );
 
-        donorAddresses.push(msg.sender);
+        donorAddresses.push(payable(msg.sender));
         donors[msg.sender].totalAmount = _totalAmount;
+        donors[msg.sender].promiseTitles = _promiseTitles;
         for (uint256 i = 0; i < _promiseTitles.length; i++) {
             donors[msg.sender].promiseDonations[_promiseTitles[i]] = _individualAmounts[i];
         }
@@ -172,10 +174,10 @@ contract PartyPromises {
                 }
             }
             // transfer funds back to donor
-            if (balanceToPayback < donorAddresses[i].totalAmount) {
+            if (balanceToPayback < donors[donorAddresses[i]].totalAmount) {
                 donorAddresses[i].transfer(balanceToPayback);
             } else {
-                donorAddresses[i].transfer(donorAddresses[i].totalAmount);
+                donorAddresses[i].transfer(donors[donorAddresses[i]].totalAmount);
             }
             emit Payback(donorAddresses[i], balanceToPayback);
         }
@@ -190,8 +192,14 @@ contract PartyPromises {
         return promiseTitles;
     }
 
-    function GetPromises() external view returns (mapping(bytes32 => Promise) memory) {
-        return promises;
+    function GetPromises() external view returns (bytes32[] memory, string[] memory, bool[] memory) {
+        string[] memory descriptions = new string[](promiseTitles.length);
+        bool[] memory completions = new bool[](promiseTitles.length);
+        for (uint256 i = 0; i < promiseTitles.length; i++) {
+            descriptions[i] = promises[promiseTitles[i]].description;
+            completions[i] = promises[promiseTitles[i]].completed;
+        }
+        return (promiseTitles, descriptions, completions);
     }
 
     function GetPromiseDescription(bytes32 _title) external view returns (string memory) {
@@ -203,7 +211,7 @@ contract PartyPromises {
     }
 
     // getters: donors
-    function GetDonorAddresses() external view returns (address[] memory) {
+    function GetDonorAddresses() external view returns (address payable[] memory) {
         return donorAddresses;
     }
 
@@ -211,8 +219,12 @@ contract PartyPromises {
         return donors[_donor].totalAmount;
     }
 
-    function GetDonorPromiseDonations(address _donor) external view returns (uint256) {
-        return donors[_donor].promiseDonations;
+    function GetDonorPromiseDonations(address _donor) external view returns (bytes32[] memory, uint256[] memory) {
+        uint256[] memory amounts;
+        for (uint256 i = 0; i < donors[_donor].promiseTitles.length; i++) {
+            amounts[i] = donors[_donor].promiseDonations[donors[_donor].promiseTitles[i]];
+        }
+        return (donors[_donor].promiseTitles, amounts);
     }
 
     // getters: owner, partyName, creationTime, expirationTime
