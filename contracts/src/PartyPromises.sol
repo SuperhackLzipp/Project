@@ -219,6 +219,7 @@ contract PartyPromises {
         return donors[_donor].totalAmount;
     }
 
+    // TODO: out of bounds error
     function GetDonorPromiseDonations(address _donor) external view returns (bytes32[] memory, uint256[] memory) {
         uint256[] memory amounts;
         for (uint256 i = 0; i < donors[_donor].promiseTitles.length; i++) {
