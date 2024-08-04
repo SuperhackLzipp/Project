@@ -7,18 +7,20 @@ import {PartyPromises} from "../src/PartyPromises.sol";
 contract PartyPromisesTest is Test {
     PartyPromises public partyPromises;
     bytes32 public partyName;
-    uint256 public creationTime;
-    uint256 public expirationTime;
+    uint32 public creationTime;
+    uint32 public expirationTime;
     address public owner;
     bytes32 public promiseTitle1;
     bytes32 public promiseTitle2;
     string public description1;
     string public description2;
+    bytes32[] public promiseTitles;
+    string[] public descriptions;
     string public url;
 
     function setUp() public {
         partyName = "Example Party";
-        creationTime = block.timestamp;
+        creationTime = uint32(block.timestamp);
         expirationTime = creationTime + 1 days;
         owner = address(this);
         promiseTitle1 = "Promise1";
@@ -26,12 +28,16 @@ contract PartyPromisesTest is Test {
         description1 = "Description 1";
         description2 = "Description 2";
         url = "https://example.com";
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
-        string[] memory descriptions = [description1, description2];
 
-        partyPromises = new PartyPromises(
-            partyName, creationTime, expirationTime, url, promiseTitles, descriptions
-        );
+        promiseTitles = new bytes32[](2);
+        promiseTitles[0] = promiseTitle1;
+        promiseTitles[1] = promiseTitle2;
+
+        descriptions = new string[](2);
+        descriptions[0] = description1;
+        descriptions[1] = description2;
+
+        partyPromises = new PartyPromises(partyName, expirationTime, url, promiseTitles, descriptions);
 
         vm.deal(address(this), 100 ether);
     }
@@ -40,21 +46,21 @@ contract PartyPromisesTest is Test {
      * The following tests will test the constructor
      */
     function test_Constructor() public {
-        assertEq(partyPromises.owner(), address(this));
-        assertEq(partyPromises.partyName(), partyName);
+        assertEq(partyPromises.GetOwner(), address(this));
+        assertEq(partyPromises.GetPartyName(), partyName);
         assertEq(partyPromises.creationTime(), creationTime);
-        assertEq(partyPromises.expirationTime(), expirationTime);
-        assertEq(partyPromises.partyProgramURL(), url);
-        assertEq(partyPromises.promiseTitles(0), promiseTitle1);
+        assertEq(partyPromises.GetExpirationTime(), expirationTime);
+        assertEq(partyPromises.GetPartyProgramURL(), url);
+
+        bytes32[] memory _promiseTitles = partyPromises.GetPromiseTitles();
+        assertEq(_promiseTitles);
         assertEq(partyPromises.promiseTitles(1), promiseTitle2);
-        assertEq(partyPromises.promises(promiseTitle1).description, description1);
-        assertEq(partyPromises.promises(promiseTitle2).description, description2);
+        assertEq(partyPromises.promises[promiseTitle1].description, description1);
+        assertEq(partyPromises.promises[promiseTitle2].description, description2);
     }
 
     function test_ConstructorNoArgs() public {
-        PartyPromises partypromises2 = new PartyPromises(
-            partyName, creationTime, expirationTime, "", [], []
-        );
+        PartyPromises partypromises2 = new PartyPromises(partyName, creationTime, expirationTime, "", [], []);
 
         assertEq(partypromises2.owner(), address(this));
         assertEq(partypromises2.partyName(), partyName);
@@ -65,9 +71,7 @@ contract PartyPromisesTest is Test {
     }
 
     function testFail_ConstructorDifferentLengths() public {
-        bytes32[] memory promiseTitles = [promiseTitle1];
-        string[] memory descriptions = [description1, description2];
-        new PartyPromises(partyName, creationTime, expirationTime, url, promiseTitles, descriptions);
+        new PartyPromises(partyName, creationTime, expirationTime, url, [promiseTitle1], [description1, description2]);
     }
 
     /**
@@ -111,9 +115,9 @@ contract PartyPromisesTest is Test {
     }
 
     function test_GetPromiseTitles() public {
-        bytes32[] memory promiseTitles = partyPromises.GetPromiseTitles();
-        assertEq(promiseTitles[0], promiseTitle1);
-        assertEq(promiseTitles[1], promiseTitle2);
+        bytes32[] memory _promiseTitles = partyPromises.GetPromiseTitles();
+        assertEq(_promiseTitles[0], promiseTitle1);
+        assertEq(_promiseTitles[1], promiseTitle2);
     }
 
     function test_GetPromises() public {
@@ -144,9 +148,9 @@ contract PartyPromisesTest is Test {
     function test_Donate() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, amounts);
 
         assertEq(partyPromises.donors(address(this)).totalAmount, amount1 + amount2);
         assertEq(partyPromises.donors(address(this)).promiseDonations(promiseTitle1), amount1);
@@ -156,19 +160,19 @@ contract PartyPromisesTest is Test {
     function testFail_DonatedAlready() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
 
-        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
-        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, amounts);
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, amounts);
     }
 
     function test_HandlePromiseFundsOneCompleted() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.Donate{value: amount1 + amount2}(amount1 + amount2, _promiseTitles, amounts);
 
         partyPromises.CompletePromise(promiseTitle1);
         vm.warp(creationTime + 2 days);
@@ -187,7 +191,7 @@ contract PartyPromisesTest is Test {
         assertEq(partyPromises.GetPartyBalance(), 0);
     }
 
-    function testFail_HandlePromiseFundsTooEarly() public{
+    function testFail_HandlePromiseFundsTooEarly() public {
         vm.warp(creationTime + 1 days);
         partyPromises.CompletePromise(promiseTitle1);
     }
@@ -205,9 +209,9 @@ contract PartyPromisesTest is Test {
     function test_GetDonorAddresses() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.donate(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.donate(amount1 + amount2, _promiseTitles, amounts);
 
         address[] memory addresses = partyPromises.GetDonorAddresses();
         assertEq(addresses[0], address(this));
@@ -216,9 +220,9 @@ contract PartyPromisesTest is Test {
     function test_GetDonorTotalAmount() public {
         uint256 amount1 = 1 ether;
         uint256 amount2 = 2 ether;
-        bytes32[] memory promiseTitles = [promiseTitle1, promiseTitle2];
+        bytes32[] memory _promiseTitles = [promiseTitle1, promiseTitle2];
         uint256[] memory amounts = [amount1, amount2];
-        partyPromises.donate(amount1 + amount2, promiseTitles, amounts);
+        partyPromises.donate(amount1 + amount2, _promiseTitles, amounts);
 
         uint256 totalAmount = partyPromises.GetDonorTotalAmount(address(this));
         assertEq(totalAmount, amount1 + amount2);

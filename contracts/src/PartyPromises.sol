@@ -31,8 +31,8 @@ contract PartyPromises {
     // public variables
     address payable public immutable owner;
     bytes32 public immutable partyName;
-    uint256 public immutable creationTime; // (dd/mm/yyyy)
-    uint256 public immutable expirationTime; // (dd/mm/yyyy)
+    uint32 public immutable creationTime; // (dd/mm/yyyy) ONLY VIABLE UNTIL 2106!
+    uint32 public immutable expirationTime; // (dd/mm/yyyy) ONLY VIABLE UNTIL 2106!
     string public partyProgramURL;
     mapping(bytes32 => Promise) public promises;
     bytes32[] public promiseTitles;
@@ -40,7 +40,7 @@ contract PartyPromises {
     // constructor
     constructor(
         bytes32 _partyName,
-        uint256 _expirationTime,
+        uint32 _expirationTime,
         string memory _partyProgramURL,
         bytes32[] memory _promiseTitles, // optional
         string[] memory _descriptions // optional
@@ -50,7 +50,7 @@ contract PartyPromises {
         );
         owner = payable(msg.sender);
         partyName = _partyName;
-        creationTime = block.timestamp;
+        creationTime = uint32(block.timestamp);
         expirationTime = _expirationTime;
         partyProgramURL = bytes(_partyProgramURL).length > 0 ? _partyProgramURL : "Not set";
         if (_promiseTitles.length == 0) {
@@ -65,12 +65,12 @@ contract PartyPromises {
 
     // modifiers
     modifier notExpired() {
-        require(block.timestamp <= expirationTime, "Contract has expired");
+        require(uint32(block.timestamp) <= expirationTime, "Contract has expired");
         _;
     }
 
     modifier isExpired() {
-        require(block.timestamp > expirationTime, "Contract has not expired");
+        require(uint32(block.timestamp) > expirationTime, "Contract has not expired");
         _;
     }
 
@@ -240,11 +240,15 @@ contract PartyPromises {
         return partyName;
     }
 
-    function GetCreationTime() external view returns (uint256) {
+    function GetCreationTime() external view returns (uint32) {
         return creationTime;
     }
 
-    function GetExpirationTime() external view returns (uint256) {
+    function GetExpirationTime() external view returns (uint32) {
         return expirationTime;
+    }
+
+    function GetPartyProgramURL() external view returns (string memory) {
+        return partyProgramURL;
     }
 }
