@@ -73,7 +73,8 @@ contract PartyPromisesTest is Test {
     }
 
     function test_ConstructorNoArgs() public {
-        PartyPromises partyPromises2 = new PartyPromises(partyName, expirationTime, "", new bytes32[](0), new string[](0));
+        PartyPromises partyPromises2 =
+            new PartyPromises(partyName, expirationTime, "", new bytes32[](0), new string[](0));
 
         assertEq(partyPromises2.GetOwner(), address(this));
         assertEq(partyPromises2.GetPartyName(), partyName);
@@ -107,7 +108,7 @@ contract PartyPromisesTest is Test {
      * The following tests will test the receive && fallback functions
      */
     function testFail_SendEthAnonymously() public {
-        (bool success, ) = address(partyPromises).call{value: 1 ether}("");
+        (bool success,) = address(partyPromises).call{value: 1 ether}("");
         require(success, "Call should have failed");
     }
 
@@ -136,6 +137,19 @@ contract PartyPromisesTest is Test {
         vm.stopPrank();
     }
 
+    function testFail_CompletePromiseExpired() public {
+        vm.warp(expirationTime + 1 days);
+
+        address validatorAddress = address(0x123);
+        vm.startPrank(validatorAddress);
+        partyPromises.CompletePromise(promiseTitle1);
+        vm.stopPrank();
+    }
+
+    function testFail_CompletePromiseOwnerCalled() public {
+        partyPromises.CompletePromise(promiseTitle1);
+    }
+
     function test_UncompletePromise() public {
         address validatorAddress = address(0x123);
         vm.startPrank(validatorAddress);
@@ -148,6 +162,21 @@ contract PartyPromisesTest is Test {
         partyPromises.UncompletePromise(promiseTitle1);
         assertEq(partyPromises.GetPromiseCompleted(promiseTitle1), false);
         vm.stopPrank();
+    }
+
+    function testFail_UncompletePromiseExpired() public {
+        vm.warp(expirationTime + 1 days);
+
+        address validatorAddress = address(0x123);
+        vm.startPrank(validatorAddress);
+        partyPromises.CompletePromise(promiseTitle1);
+        vm.stopPrank();
+
+        partyPromises.UncompletePromise(promiseTitle1);
+    }
+
+    function testFail_UncompletePromiseOwnerCalled() public {
+        partyPromises.UncompletePromise(promiseTitle1);
     }
 
     function test_GetPromiseTitles() public view {
