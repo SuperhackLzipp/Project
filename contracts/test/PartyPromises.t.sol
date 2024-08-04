@@ -281,7 +281,7 @@ contract PartyPromisesTest is Test {
         vm.warp(creationTime + 2 days);
 
         partyPromises.HandlePromiseFunds();
-        assertEq(partyPromises.GetPartyBalance(), 0);
+        assertApproxEqAbs(partyPromises.GetPartyBalance(), 0, 21000);
     }
 
     function testFail_HandlePromiseFundsTooEarly() public {

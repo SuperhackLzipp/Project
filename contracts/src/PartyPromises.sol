@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.20;
 
-import "forge-std/console.sol";
-
 contract PartyPromises {
     // Struct for storing a donator
     struct Donor {
@@ -152,7 +150,7 @@ contract PartyPromises {
      * Uncompletes a promise. Only addresses verified by EAS will be allowed to call this function
      * @param _title - title of the promise
      */
-    function UncompletePromise(bytes32 _title) external notExpired {
+    function UncompletePromise(bytes32 _title) external notExpired notOwner {
         promises[_title].completed = false;
         emit PromiseUncompleted(_title);
     }
@@ -167,10 +165,7 @@ contract PartyPromises {
         for (uint256 i = 0; i < donorAddresses.length; i++) {
             balanceToPayback = 0;
             // for loop for every single promise
-            console.log("donor address: ", donorAddresses[i]);
             for (uint256 j = 0; j < promiseTitles.length; j++) {
-                console.log("promise title: ", j);
-                console.log(donors[donorAddresses[i]].promiseDonations[promiseTitles[j]]);
                 if (
                     donors[donorAddresses[i]].promiseDonations[promiseTitles[j]] != 0
                         && promises[promiseTitles[j]].completed == false
@@ -179,31 +174,23 @@ contract PartyPromises {
                 }
             }
             // transfer funds back to donor
-            console.log("balance to payback: ", balanceToPayback);
             bool success;
             if (balanceToPayback < donors[donorAddresses[i]].totalAmount) {
-                console.log("triggered 1");
                 success = payable(donorAddresses[i]).send(balanceToPayback);
-                console.log("success: ", success);
             } else {
-                console.log("triggered 2");
                 success = payable(donorAddresses[i]).send(donors[donorAddresses[i]].totalAmount);
-                console.log("success: ", success);
             }
-            // require(success, "Transfer failed");
-            console.log("payed back: ", balanceToPayback);
+            require(success, "Transfer failed");
             emit Payback(donorAddresses[i], balanceToPayback);
         }
         // wire all remaining funds to party
         uint256 partyBalance = address(this).balance;
-        console.log("party balance: ", partyBalance);
         if (partyBalance <= 21000) {
             emit DonationsReceived(owner, 0);
         } else {
             owner.transfer(address(this).balance - 21000);
             emit DonationsReceived(owner, partyBalance);
         }
-        // console.log("party balance after transfer: ", address(this).balance);
     }
 
     // getters: promises
