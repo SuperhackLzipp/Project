@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {CompanyFactory} from "../src/CompanyFactory.sol";
+import {PartyPromisesFactory} from "../src/PartyPromisesFactory.sol";
 
 import "forge-std/console.sol";
 
-contract CompanyFactoryScript is Script {
-    CompanyFactory public companyFactory;
+contract PartyPromisesFactoryScript is Script {
+    PartyPromisesFactory public companyFactory;
 
     function setUp() public {}
 
@@ -17,7 +17,8 @@ contract CompanyFactoryScript is Script {
 
         vm.startBroadcast(privateKey);
 
-        companyFactory = new CompanyFactory();
+        companyFactory = new PartyPromisesFactory();
+        console.log("PartyPromisesFactory created at address: ", address(companyFactory));
 
         vm.stopBroadcast();
     }

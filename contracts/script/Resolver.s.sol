@@ -14,7 +14,7 @@ contract ComplaintResolverScript is Script {
 
     function run() public {
         uint256 privateKey = vm.envUint("DEV_PRIVATE_KEY");
-        address easAddress = vm.envAddress("ETH_SEPOLIA_EAS_ADDRESS");
+        address easAddress = vm.envAddress("BASE_SEPOLIA_EAS_ADDRESS");
 
         IEAS eas = IEAS(easAddress);
         bytes32 companyName = keccak256(abi.encodePacked("Example Company"));
