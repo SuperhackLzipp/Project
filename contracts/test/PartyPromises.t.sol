@@ -41,7 +41,7 @@ contract PartyPromisesTest is Test {
         descriptions[0] = description1;
         descriptions[1] = description2;
 
-        partyPromises = new PartyPromises(partyName, expirationTime, url, promiseTitles, descriptions);
+        partyPromises = new PartyPromises(address(this), partyName, expirationTime, url, promiseTitles, descriptions);
 
         vm.deal(address(this), 100 ether);
     }
@@ -74,7 +74,7 @@ contract PartyPromisesTest is Test {
 
     function test_ConstructorNoArgs() public {
         PartyPromises partyPromises2 =
-            new PartyPromises(partyName, expirationTime, "", new bytes32[](0), new string[](0));
+            new PartyPromises(address(this), partyName, expirationTime, "", new bytes32[](0), new string[](0));
 
         assertEq(partyPromises2.GetOwner(), address(this));
         assertEq(partyPromises2.GetPartyName(), partyName);
@@ -101,7 +101,7 @@ contract PartyPromisesTest is Test {
         string[] memory _descriptions = new string[](2);
         _descriptions[0] = description1;
         _descriptions[1] = description2;
-        new PartyPromises(partyName, expirationTime, url, _promiseTitles, _descriptions);
+        new PartyPromises(address(this), partyName, expirationTime, url, _promiseTitles, _descriptions);
     }
 
     /**

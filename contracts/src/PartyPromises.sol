@@ -39,6 +39,7 @@ contract PartyPromises {
 
     // constructor
     constructor(
+        address _owner,
         bytes32 _partyName,
         uint32 _expirationTime,
         string memory _partyProgramURL,
@@ -48,7 +49,7 @@ contract PartyPromises {
         require(
             _promiseTitles.length == _descriptions.length, "Length of promise titles and descriptions must be equal"
         );
-        owner = payable(msg.sender);
+        owner = payable(_owner);
         partyName = _partyName;
         creationTime = uint32(block.timestamp);
         expirationTime = _expirationTime;
@@ -74,7 +75,7 @@ contract PartyPromises {
         _;
     }
 
-    modifier isOwner() {
+    modifier onlyOwner() {
         require(msg.sender == owner, "You are not the owner");
         _;
     }
@@ -130,7 +131,12 @@ contract PartyPromises {
      * @param _title - title of the promise
      * @param _description - description of the promise
      */
-    function AddPromise(bytes32 _title, string calldata _description) external notExpired isOwner nonexistant(_title) {
+    function AddPromise(bytes32 _title, string calldata _description)
+        external
+        notExpired
+        onlyOwner
+        nonexistant(_title)
+    {
         promiseTitles.push(_title);
         promises[_title].description = _description;
         promises[_title].completed = false;
@@ -159,7 +165,7 @@ contract PartyPromises {
      * Withdraws the adequate amount of funds from the contract for every promise completed
      * For every promise not completed, the funds will be sent back to the donors
      */
-    function HandlePromiseFunds() external payable isOwner isExpired {
+    function HandlePromiseFunds() external payable onlyOwner isExpired {
         uint256 balanceToPayback;
         // for loop for handling every single donor
         for (uint256 i = 0; i < donorAddresses.length; i++) {
