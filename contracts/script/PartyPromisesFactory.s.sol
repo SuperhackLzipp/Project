@@ -13,7 +13,6 @@ contract PartyPromisesFactoryScript is Script {
 
     function run() public {
         uint256 privateKey = vm.envUint("DEV_PRIVATE_KEY");
-        address account = vm.addr(privateKey);
 
         vm.startBroadcast(privateKey);
 
