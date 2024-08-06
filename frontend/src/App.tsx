@@ -16,19 +16,6 @@ function App() {
             <Box sx={{ flexGrow: 1, height: "100vh", display: "flex", flexDirection: "column" }}>
                 <Router>
                     <PartyPromisesAppBar />
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                                <Link to="/about">About</Link>
-                            </li>
-                            <li>
-                                <Link to="/contact">Contact</Link>
-                            </li>
-                        </ul>
-                    </nav>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/donate" element={<DonationPage />} />
