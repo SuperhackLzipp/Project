@@ -1,3 +1,4 @@
+/**
 import { SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
 
 const schemaRegistryContractAddress =

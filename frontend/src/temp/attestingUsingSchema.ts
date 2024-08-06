@@ -1,3 +1,4 @@
+/**
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 
 const eas = new EAS(EASContractAddress);
@@ -26,3 +27,4 @@ const tx = await eas.attest({
 const newAttestationUID = await tx.wait();
 
 console.log("New attestation UID:", newAttestationUID);
+*/

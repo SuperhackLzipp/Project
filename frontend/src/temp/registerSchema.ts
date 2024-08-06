@@ -1,3 +1,4 @@
+/**
 import { SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from 'ethers';
 
@@ -18,3 +19,4 @@ const transaction = await schemaRegistry.register({
 
 // Optional: Wait for transaction to be validated
 await transaction.wait();
+*/
