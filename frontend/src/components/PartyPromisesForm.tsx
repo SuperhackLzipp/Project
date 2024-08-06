@@ -32,13 +32,11 @@ export const PartyPromisesForm: React.FC = () => {
     return (
         <div>
             <form className="partyField">
-                <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="party"
-                >
+                <label className="label" htmlFor="party">
                     Party Name
                 </label>
                 <input
+                    className="textField"
                     type="text"
                     id="name"
                     value={name}
@@ -74,14 +72,12 @@ export const PartyPromisesForm: React.FC = () => {
                 ))}
             </ul>
             <form onSubmit={handleAddPromise} className="promiseField">
-                <div>
-                    <label
-                        className="block text-sm font-medium text-gray-700"
-                        htmlFor="title"
-                    >
+                <div className="titleField">
+                    <label className="label" htmlFor="title">
                         Title
                     </label>
                     <input
+                        className="textField"
                         type="text"
                         id="title"
                         name="title"
@@ -89,14 +85,12 @@ export const PartyPromisesForm: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label
-                        className="block text-sm font-medium text-gray-700"
-                        htmlFor="description"
-                    >
+                <div className="descriptionField">
+                    <label className="label" htmlFor="description">
                         Description
                     </label>
                     <input
+                        className="textField"
                         type="text"
                         id="description"
                         name="description"
@@ -104,14 +98,12 @@ export const PartyPromisesForm: React.FC = () => {
                         onChange={handleChange}
                     />
                 </div>
-                <div>
-                    <label
-                        className="block text-sm font-medium text-gray-700"
-                        htmlFor="description"
-                    >
+                <div className="attesterField">
+                    <label className="label" htmlFor="description">
                         Attester
                     </label>
                     <input
+                        className="textField"
                         type="text"
                         id="attester"
                         name="attester"
