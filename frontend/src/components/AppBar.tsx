@@ -1,30 +1,3 @@
-// import React from "react";
-// import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
-// import MenuIcon from "@mui/icons-material/Menu";
-
-// export const PartyPromisesAppBar: React.FC = () => {
-//     return (
-//         <AppBar position="static">
-//             <Toolbar>
-//                 <IconButton
-//                     size="large"
-//                     edge="start"
-//                     color="inherit"
-//                     aria-label="menu"
-//                     sx={{ mr: 2 }}
-//                 >
-//                     <MenuIcon />
-//                 </IconButton>
-//                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//                     MyApp
-//                 </Typography>
-//             </Toolbar>
-//         </AppBar>
-//     );
-// };
-
-// export default PartyPromisesAppBar;
-
 import React, { useState } from "react";
 import {
     AppBar,
@@ -35,6 +8,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    Button,
     Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -59,6 +33,23 @@ export const PartyPromisesAppBar: React.FC = () => {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
+                    {/* <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => setDrawerOpen(true)}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        sx={{ flexGrow: 1 }}
+                    >
+                        MyApp
+                    </Typography> */}
                     <IconButton
                         size="large"
                         edge="start"
@@ -76,22 +67,27 @@ export const PartyPromisesAppBar: React.FC = () => {
                     >
                         MyApp
                     </Typography>
+                    <Button color="inherit">Create Program</Button>
+                    <Button color="inherit">Login</Button>
+                    <Button color="inherit">Signup</Button>
                 </Toolbar>
             </AppBar>
-            <Drawer
+            {/* <Drawer
                 anchor="left"
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
             >
                 <List>
-                    <ListItem button onClick={toggleDrawer(false)}>
+                    <ListItem onClick={toggleDrawer(false)}>
                         <ListItemText primary="Option 1" />
                     </ListItem>
-                    <ListItem button onClick={toggleDrawer(false)}>
+                    <ListItem onClick={toggleDrawer(false)}>
                         <ListItemText primary="Option 2" />
                     </ListItem>
                 </List>
-            </Drawer>
+            </Drawer> */}
         </Box>
     );
 };
+
+export default PartyPromisesAppBar;
