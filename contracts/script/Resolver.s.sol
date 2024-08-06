@@ -2,13 +2,13 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import {ComplaintResolver} from "../src/ComplaintResolver.sol";
-import { IEAS, Attestation } from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
+import {Resolver} from "../src/Resolver.sol";
+import {IEAS, Attestation} from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
 
 import "forge-std/console.sol";
 
-contract ComplaintResolverScript is Script {
-    ComplaintResolver public complaintResolver;
+contract ResolverScript is Script {
+    Resolver public resolver;
 
     function setUp() public {}
 
@@ -18,16 +18,12 @@ contract ComplaintResolverScript is Script {
 
         IEAS eas = IEAS(easAddress);
         bytes32 companyName = keccak256(abi.encodePacked("Example Company"));
-        address[] memory validAttesters = new address[](1);
-        validAttesters[0] = vm.addr(privateKey);
+        bytes32[] memory validAttesters = new bytes32[](1);
+        validAttesters[0] = keccak256(abi.encodePacked(vm.addr(privateKey)));
 
         vm.startBroadcast(privateKey);
 
-        complaintResolver = new ComplaintResolver(
-            eas,
-            companyName,
-            validAttesters
-        );
+        resolver = new Resolver(eas, companyName, validAttesters);
 
         vm.stopBroadcast();
     }

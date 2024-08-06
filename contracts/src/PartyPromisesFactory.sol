@@ -7,6 +7,11 @@ contract PartyPromisesFactory {
     // events
     event PartyCreated(address _partyAddress, bytes32 _partyName, uint32 _expirationTime);
 
+    modifier expiredGreaterStart(uint32 _expirationTime) {
+        require(_expirationTime > uint32(block.timestamp), "Expiration time must be greater than creation time");
+        _;
+    }
+
     // private variables
     address[] private partyAddresses;
 
@@ -25,7 +30,7 @@ contract PartyPromisesFactory {
         string memory _partyProgramURL,
         bytes32[] memory _promiseTitles,
         string[] memory _descriptions
-    ) public returns (address) {
+    ) public expiredGreaterStart(_expirationTime) returns (address) {
         PartyPromises party =
             new PartyPromises(msg.sender, _partyName, _expirationTime, _partyProgramURL, _promiseTitles, _descriptions);
         partyAddresses.push(address(party));

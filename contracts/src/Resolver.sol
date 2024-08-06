@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@ethereum-attestation-service/eas-contracts/contracts/resolver/SchemaResolver.sol";
 
-contract ComplaintResolver is SchemaResolver {
+contract Resolver is SchemaResolver {
     bytes32 public immutable partyName;
     bytes32[] private validAttestersHashed;
 

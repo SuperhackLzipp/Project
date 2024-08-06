@@ -73,6 +73,8 @@ contract PartyPromisesFactoryTest is Test {
     }
 
     function test_CreatePartyNoArgs() public {
+        creationTime = uint32(block.timestamp);
+        expirationTime = uint32(creationTime + 2 days);
         address partyAddress =
             partyPromisesFactory.CreateParty(partyName, expirationTime, "", new bytes32[](0), new string[](0));
 
@@ -94,5 +96,18 @@ contract PartyPromisesFactoryTest is Test {
         assertEq(_promiseTitles.length, 0);
         assertEq(_descriptions.length, 0);
         assertEq(_completions.length, 0);
+    }
+
+    function testFail_CreatePartyDifferentLengths() public {
+        creationTime = uint32(block.timestamp);
+        expirationTime = uint32(creationTime + 2 days);
+        bytes32[] memory _promiseTitles = new bytes32[](1);
+        _promiseTitles[0] = "Promise 1";
+        partyPromisesFactory.CreateParty(partyName, expirationTime, "", _promiseTitles, descriptions);
+    }
+
+    function testFail_CreatePartyExpiredTooSmall() public {
+        uint32 _expirationTime = uint32(block.timestamp - 1 days);
+        partyPromisesFactory.CreateParty(partyName, _expirationTime, "", promiseTitles, descriptions);
     }
 }
