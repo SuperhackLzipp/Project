@@ -1,0 +1,89 @@
+/* General dark mode background and text colors */
+body.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
+}
+
+/* Styles for .partyField in dark mode */
+.dark-mode .partyField {
+    background-color: #242424; /* Slightly lighter than body background */
+    color: #ffffff; /* White text for contrast */
+}
+
+/* Styles for .formItem in dark mode */
+.dark-mode .formItem {
+    background-color: #1e1e1e; /* Dark background for the list */
+    color: #cccccc; /* Slightly dimmed text for less contrast */
+}
+
+/* Styles for .promiseField in dark mode */
+.dark-mode .promiseField {
+    background-color: #242424; /* Matching .partyField */
+    color: #ffffff; /* White text for contrast */
+}
+
+/* Adjust input fields for dark mode */
+.dark-mode input[type="text"] {
+    background-color: #333333; /* Darker input field for contrast */
+    color: #ffffff; /* White text */
+    border: 1px solid #555555; /* Slightly lighter border for visibility */
+}
+
+/* Adjust buttons for dark mode */
+.dark-mode button {
+    background-color: #3a3a3a; /* Dark background for buttons */
+    color: #ffffff; /* White text */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Example padding */
+    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+}
+
+/* Hover effect for buttons in dark mode */
+.dark-mode button:hover {
+    background-color: #505050; /* Lighter than button background for hover effect */
+}
+
+/* General light mode background and text colors */
+body, body.light-mode {
+    background-color: #ffffff; /* Light background */
+    color: #333333; /* Dark text */
+}
+
+/* Styles for .partyField in light mode */
+.partyField, .light-mode .partyField {
+    background-color: #f0f0f0; /* Slightly darker than body background */
+    color: #333333; /* Dark text for contrast */
+}
+
+/* Styles for .formItem in light mode */
+.formItem, .light-mode .formItem {
+    background-color: #fafafa; /* Light background for the list */
+    color: #666666; /* Slightly darker text for contrast */
+}
+
+/* Styles for .promiseField in light mode */
+.promiseField, .light-mode .promiseField {
+    background-color: #f0f0f0; /* Matching .partyField */
+    color: #333333; /* Dark text for contrast */
+}
+
+/* Adjust input fields for light mode */
+input[type="text"], .light-mode input[type="text"] {
+    background-color: #ffffff; /* Lighter input field for contrast */
+    color: #333333; /* Dark text */
+    border: 1px solid #cccccc; /* Slightly darker border for visibility */
+}
+
+/* Adjust buttons for light mode */
+button, .light-mode button {
+    background-color: #e0e0e0; /* Light background for buttons */
+    color: #333333; /* Dark text */
+    border: 1px solid #bbbbbb; /* Visible border */
+    padding: 10px 20px; /* Example padding */
+    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+}
+
+/* Hover effect for buttons in light mode */
+button:hover, .light-mode button:hover {
+    background-color: #d4d4d4; /* Slightly darker than button background for hover effect */
+}

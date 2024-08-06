@@ -1,26 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import "../styles/PartyPromisesForm.css";
 
 export const PartyPromisesForm: React.FC = () => {
     const [name, setName] = useState<string>("");
-    const [promises, setPromises] = useState<string[]>([]);
-    const [newPromise, setNewPromise] = useState<string>("");
+    const [promises, setPromises] = useState<
+        Array<{ title: string; description: string; attester: string }>
+    >([]);
+    const [newPromise, setNewPromise] = useState<{
+        title: string;
+        description: string;
+        attester: string;
+    }>({ title: "", description: "", attester: "" });
 
     const handleAddPromise = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (newPromise.trim() !== "") {
+        if (
+            newPromise.title.trim() !== "" &&
+            newPromise.description.trim() !== "" &&
+            newPromise.attester.trim() !== ""
+        ) {
             setPromises([...promises, newPromise]);
-            setNewPromise(""); // Reset input field after adding
+            setNewPromise({ title: "", description: "", attester: "" }); // Reset input fields after adding
         }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewPromise((prev) => ({ ...prev, [name]: value }));
     };
 
     return (
         <div>
-            <form>
+            <form className="partyField">
                 <label
                     className="block text-sm font-medium text-gray-700"
                     htmlFor="party"
                 >
-                    PartyName
+                    Party Name
                 </label>
                 <input
                     type="text"
@@ -29,31 +45,83 @@ export const PartyPromisesForm: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                 />
             </form>
-            <ul>
+            <ul className="formItem">
                 {promises.map((promise, index) => (
-                    <li key={index}>{promise}</li>
+                    <li key={index}>
+                        <div>
+                            <label>Title</label>
+                            <h3>{promise.title}</h3>
+                        </div>
+                        <div>
+                            <label>Description</label>
+                            <p>{promise.description}</p>
+                        </div>
+                        <div>
+                            <label>Attester</label>
+                            <p>{promise.attester}</p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                const updatedPromises = promises.filter(
+                                    (_, i) => i !== index
+                                );
+                                setPromises(updatedPromises);
+                            }}
+                        >
+                            Delete
+                        </button>
+                    </li>
                 ))}
             </ul>
-            <form onSubmit={handleAddPromise}>
-                <label
-                    className="block text-sm font-medium text-gray-700"
-                    htmlFor="newPromise"
-                >
-                    Add New Promise
-                </label>
-                <input
-                    type="text"
-                    id="newPromise"
-                    value={newPromise}
-                    onChange={(e) => setNewPromise(e.target.value)}
-                    className="mt-1 block w-full"
-                />
-                <button
-                    type="submit"
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                    Add Promise
-                </button>
+            <form onSubmit={handleAddPromise} className="promiseField">
+                <div>
+                    <label
+                        className="block text-sm font-medium text-gray-700"
+                        htmlFor="title"
+                    >
+                        Title
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value={newPromise.title}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label
+                        className="block text-sm font-medium text-gray-700"
+                        htmlFor="description"
+                    >
+                        Description
+                    </label>
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        value={newPromise.description}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label
+                        className="block text-sm font-medium text-gray-700"
+                        htmlFor="description"
+                    >
+                        Attester
+                    </label>
+                    <input
+                        type="text"
+                        id="attester"
+                        name="attester"
+                        value={newPromise.attester}
+                        onChange={handleChange}
+                        pattern="[0-9a-fA-F]+"
+                        title="Please enter a hexadecimal value."
+                    />
+                </div>
+                <button type="submit">Add Promise</button>
             </form>
         </div>
     );
