@@ -1,28 +1,26 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
+import { SchemaResolver } from "../SchemaResolver.sol";
+import { IEAS, Attestation } from "../../IEAS.sol";
 
-import "@ethereum-attestation-service/eas-contracts/contracts/resolver/SchemaResolver.sol";
+/**
+ * @title AttesterResolver
+ * @notice A sample schema resolver that checks whether the attestation is from a specific attester.
+ */
+/// @title AttesterResolver
+/// @notice A sample schema resolver that checks whether the attestation is from a specific attester.
+contract AttesterResolver is SchemaResolver {
+    address private immutable targetAttester;
 
-contract Resolver is SchemaResolver {
-    bytes32 public immutable partyName;
-    bytes32[] private validAttestersHashed;
-
-    constructor(IEAS eas, bytes32 _partyName, bytes32[] memory _validAttestersHashed) SchemaResolver(eas) {
-        partyName = _partyName;
-        validAttestersHashed = _validAttestersHashed;
+    constructor(IEAS eas, address _targetAttester) SchemaResolver(eas) {
+        targetAttester = _targetAttester;
     }
 
-    function onAttest(Attestation calldata attestation, uint256 /*value*/ ) internal view override returns (bool) {
-        bytes32 attesterHash = keccak256(abi.encodePacked(attestation.attester));
-        for (uint256 i = 0; i < validAttestersHashed.length; i++) {
-            if (attesterHash == validAttestersHashed[i]) {
-                return true;
-            }
-        }
-        return false;
+    function onAttest(Attestation calldata attestation, uint256 /*value*/) internal view override returns (bool) {
+        return attestation.attester == targetAttester;
     }
 
-    function onRevoke(Attestation calldata, /*attestation*/ uint256 /*value*/ ) internal pure override returns (bool) {
+    function onRevoke(Attestation calldata /*attestation*/, uint256 /*value*/) internal pure override returns (bool) {
         return true;
     }
 }

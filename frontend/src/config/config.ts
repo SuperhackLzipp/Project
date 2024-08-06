@@ -10,9 +10,10 @@ export const BASE_SEPOLIA_SCHEMA_REGISTRY_ADDRESS =
     "0x4200000000000000000000000000000000000020";
 
 // Schema
-export const SCHEMA = "bytes32 promiseTitle, string description";
+export const SCHEMA = "bytes32 promiseTitle, string description, bool isCompleted";
 export const SCHEMA_DETAILS = {
     schemaName: "Party Promise Attestation Schema",
     promiseTitle: "byte32 (title of promise)",
     description: "string (description of promise)",
+    isCompleted: "bool (is promise completed)"
 };
