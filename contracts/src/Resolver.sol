@@ -7,8 +7,6 @@ import { IEAS, Attestation } from "../../IEAS.sol";
  * @title AttesterResolver
  * @notice A sample schema resolver that checks whether the attestation is from a specific attester.
  */
-/// @title AttesterResolver
-/// @notice A sample schema resolver that checks whether the attestation is from a specific attester.
 contract AttesterResolver is SchemaResolver {
     address private immutable targetAttester;
 
