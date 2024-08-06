@@ -11,9 +11,9 @@ function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div>
+            {/* <div>
                 <h1>Party Promise Form</h1>
-            </div>
+            </div> */}
             <PartyPromisesForm />
         </ThemeProvider>
     );

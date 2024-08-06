@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import "../styles/PartyPromisesForm.css";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
 export const PartyPromisesForm: React.FC = () => {
     const [name, setName] = useState<string>("");
@@ -12,7 +16,7 @@ export const PartyPromisesForm: React.FC = () => {
         attester: string;
     }>({ title: "", description: "", attester: "" });
 
-    const handleAddPromise = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleAddPromise = (event: React.MouseEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (
             newPromise.title.trim() !== "" &&
@@ -72,48 +76,37 @@ export const PartyPromisesForm: React.FC = () => {
                 ))}
             </ul>
             <form onSubmit={handleAddPromise} className="promiseField">
-                <div className="titleField">
-                    <label className="label" htmlFor="title">
-                        Title
-                    </label>
-                    <input
-                        className="textField"
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={newPromise.title}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="descriptionField">
-                    <label className="label" htmlFor="description">
-                        Description
-                    </label>
-                    <input
-                        className="textField"
-                        type="text"
-                        id="description"
-                        name="description"
-                        value={newPromise.description}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="attesterField">
-                    <label className="label" htmlFor="description">
-                        Attester
-                    </label>
-                    <input
-                        className="textField"
-                        type="text"
-                        id="attester"
-                        name="attester"
-                        value={newPromise.attester}
-                        onChange={handleChange}
-                        pattern="[0-9a-fA-F]+"
-                        title="Please enter a hexadecimal value."
-                    />
-                </div>
-                <button type="submit">Add Promise</button>
+                <TextField
+                    required
+                    id="filled-required-title"
+                    label="Title"
+                    variant="filled"
+                    name="title"
+                    value={newPromise.title}
+                    onChange={handleChange}
+                />
+                <TextField
+                    id="filled-multiline-static-description"
+                    label="Description"
+                    multiline
+                    rows={4}
+                    variant="filled"
+                    name="description"
+                    value={newPromise.description}
+                    onChange={handleChange}
+                />
+                <TextField
+                    required
+                    id="filled-required-attester"
+                    label="Attester Public Address"
+                    variant="filled"
+                    name="attester"
+                    value={newPromise.attester}
+                    onChange={handleChange}
+                />
+                <Button type="submit" variant="contained">
+                    Add
+                </Button>
             </form>
         </div>
     );
