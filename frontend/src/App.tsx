@@ -1,21 +1,21 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+
+import theme from "./theme";
 
 // own components
 import { PartyPromisesForm } from "./components/PartyPromisesForm";
+import { ThemeProvider } from "@emotion/react";
 
 function App() {
     const [count, setCount] = useState(0);
 
     return (
-        <>
+        <ThemeProvider theme={theme}>
             <div>
                 <h1>Party Promise Form</h1>
             </div>
             <PartyPromisesForm />
-        </>
+        </ThemeProvider>
     );
 }
 
