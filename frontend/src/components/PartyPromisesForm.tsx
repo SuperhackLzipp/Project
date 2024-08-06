@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "../styles/PartyPromisesForm.css";
+import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import { List, ListItem, ListItemText } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -16,7 +19,7 @@ export const PartyPromisesForm: React.FC = () => {
         attester: string;
     }>({ title: "", description: "", attester: "" });
 
-    const handleAddPromise = (event: React.MouseEvent<HTMLFormElement>) => {
+    const handleAddPromise = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (
             newPromise.title.trim() !== "" &&
@@ -35,57 +38,115 @@ export const PartyPromisesForm: React.FC = () => {
 
     return (
         <div>
-            <form className="partyField">
-                <label className="label" htmlFor="party">
-                    Party Name
-                </label>
-                <input
-                    className="textField"
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-            </form>
-            <ul className="formItem">
-                {promises.map((promise, index) => (
-                    <li key={index}>
-                        <div>
-                            <label>Title</label>
-                            <h3>{promise.title}</h3>
-                        </div>
-                        <div>
-                            <label>Description</label>
-                            <p>{promise.description}</p>
-                        </div>
-                        <div>
-                            <label>Attester</label>
-                            <p>{promise.attester}</p>
-                        </div>
-                        <button
-                            onClick={() => {
-                                const updatedPromises = promises.filter(
-                                    (_, i) => i !== index
-                                );
-                                setPromises(updatedPromises);
-                            }}
-                        >
-                            Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            <form onSubmit={handleAddPromise} className="promiseField">
+            <TextField
+                required
+                id="filled-required-attester"
+                label="Party Name"
+                variant="filled"
+                name="attester"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+            <PromisesList promises={promises} setPromises={setPromises} />
+            <PromiseForm
+                newPromise={newPromise}
+                handleChange={handleChange}
+                handleAddPromise={handleAddPromise}
+            />
+        </div>
+    );
+};
+
+interface Promise {
+    title: string;
+    description: string;
+    attester: string;
+}
+
+interface PromisesListProps {
+    promises: Promise[];
+    setPromises: React.Dispatch<React.SetStateAction<Promise[]>>;
+}
+
+const PromisesList: React.FC<PromisesListProps> = ({
+    promises,
+    setPromises,
+}) => {
+    const handleDelete = (index: number) => {
+        const updatedPromises = promises.filter((_, i) => i !== index);
+        setPromises(updatedPromises);
+    };
+
+    return (
+        <List className="formItem">
+            {promises.map((promise, index) => (
+                <ListItem key={index} divider>
+                    <ListItemText
+                        primary={promise.title}
+                        secondary={
+                            <>
+                                <div>Description: {promise.description}</div>
+                                <div>Attester: {promise.attester}</div>
+                            </>
+                        }
+                    />
+                    <IconButton
+                        type="submit"
+                        color="error"
+                        onClick={() => handleDelete(index)}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </ListItem>
+            ))}
+        </List>
+    );
+};
+
+export default PromisesList;
+
+interface NewPromise {
+    title: string;
+    description: string;
+    attester: string;
+}
+
+interface PromiseFormProps {
+    newPromise: NewPromise;
+    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleAddPromise: (event: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const PromiseForm: React.FC<PromiseFormProps> = ({
+    newPromise,
+    handleChange,
+    handleAddPromise,
+}) => {
+    return (
+        <form onSubmit={handleAddPromise} className="promiseField">
+            <Stack direction="column" spacing={1}>
+                <Stack direction="row" spacing={1}>
+                    <TextField
+                        required
+                        id="filled-required-title"
+                        label="Title"
+                        variant="filled"
+                        name="title"
+                        value={newPromise.title}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        required
+                        id="filled-required-attester"
+                        label="Attester Public Address"
+                        variant="filled"
+                        name="attester"
+                        value={newPromise.attester}
+                        onChange={handleChange}
+                    />
+                </Stack>
                 <TextField
                     required
-                    id="filled-required-title"
-                    label="Title"
-                    variant="filled"
-                    name="title"
-                    value={newPromise.title}
-                    onChange={handleChange}
-                />
-                <TextField
                     id="filled-multiline-static-description"
                     label="Description"
                     multiline
@@ -95,19 +156,12 @@ export const PartyPromisesForm: React.FC = () => {
                     value={newPromise.description}
                     onChange={handleChange}
                 />
-                <TextField
-                    required
-                    id="filled-required-attester"
-                    label="Attester Public Address"
-                    variant="filled"
-                    name="attester"
-                    value={newPromise.attester}
-                    onChange={handleChange}
-                />
-                <Button type="submit" variant="contained">
-                    Add
-                </Button>
-            </form>
-        </div>
+                <Box display="flex" justifyContent="center">
+                    <IconButton type="submit" color="success">
+                        <AddIcon />
+                    </IconButton>
+                </Box>
+            </Stack>
+        </form>
     );
 };
