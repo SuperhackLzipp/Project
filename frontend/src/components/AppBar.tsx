@@ -18,6 +18,7 @@ import WalletIcon from "@mui/icons-material/Wallet";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EditIcon from "@mui/icons-material/Edit";
 
 export const PartyPromisesAppBar: React.FC = () => {
     const location = useLocation();
@@ -31,7 +32,6 @@ export const PartyPromisesAppBar: React.FC = () => {
                     to="/"
                     size="large"
                     edge="start"
-                    // color="inherit"
                     color={isActive("/") ? "secondary" : "inherit"}
                     aria-label="menu"
                     sx={{ mr: 2 }}
@@ -48,7 +48,6 @@ export const PartyPromisesAppBar: React.FC = () => {
                         to="/create"
                         size="large"
                         edge="start"
-                        // color="inherit"
                         color={isActive("/create") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
@@ -57,13 +56,26 @@ export const PartyPromisesAppBar: React.FC = () => {
                         <NoteAddIcon />
                     </IconButton>
                 </Tooltip>
+                <Tooltip title="Create new Party Program">
+                    <IconButton
+                        component={Link}
+                        to="/edit"
+                        size="large"
+                        edge="start"
+                        color={isActive("/edit") ? "secondary" : "inherit"}
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Attest Party Promise">
                     <IconButton
                         component={Link}
                         to="/attest"
                         size="large"
                         edge="start"
-                        // color="inherit"
                         color={isActive("/attest") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
@@ -78,7 +90,6 @@ export const PartyPromisesAppBar: React.FC = () => {
                         to="/donate"
                         size="large"
                         edge="start"
-                        // color="inherit"
                         color={isActive("/donate") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}

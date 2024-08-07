@@ -20,8 +20,9 @@ export const PartyPromisesForm: React.FC = () => {
         description: string;
         attester: string;
     }>({ title: "", description: "", attester: "" });
+    const [promiseAddress, setPromiseAddress] = useState<string>("");
 
-    const handleAddPromise = (event: React.FormEvent<HTMLFormElement>) => {
+    const addPromise = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (
             newPromise.title.trim() !== "" &&
@@ -31,6 +32,12 @@ export const PartyPromisesForm: React.FC = () => {
             setPromises([...promises, newPromise]);
             setNewPromise({ title: "", description: "", attester: "" }); // Reset input fields after adding
         }
+    };
+
+    const uploadPromises = async () => {
+        const titles = promises.map((promise) => promise.title);
+        const descriptions = promises.map((promise) => promise.description);
+        const attesters = promises.map((promise) => promise.attester);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,14 +52,14 @@ export const PartyPromisesForm: React.FC = () => {
                     required
                     id="filled-required-attester"
                     label="Party Name"
-                    variant="filled"
+                    variant="outlined"
                     name="attester"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     fullWidth
                 />
                 <Tooltip title="Upload the Promises">
-                    <IconButton type="submit" color="success">
+                    <IconButton color="success" size="large" edge="start">
                         <FileUploadIcon />
                     </IconButton>
                 </Tooltip>
@@ -61,7 +68,7 @@ export const PartyPromisesForm: React.FC = () => {
             <PromiseForm
                 newPromise={newPromise}
                 handleChange={handleChange}
-                handleAddPromise={handleAddPromise}
+                addPromise={addPromise}
             />
         </Stack>
     );
@@ -122,16 +129,16 @@ interface NewPromise {
 interface PromiseFormProps {
     newPromise: NewPromise;
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleAddPromise: (event: React.FormEvent<HTMLFormElement>) => void;
+    addPromise: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const PromiseForm: React.FC<PromiseFormProps> = ({
     newPromise,
     handleChange,
-    handleAddPromise,
+    addPromise,
 }) => {
     return (
-        <form onSubmit={handleAddPromise} className="stack">
+        <form onSubmit={addPromise} className="stack">
             <Stack direction="column" spacing={1} padding={1}>
                 <Stack direction="row" spacing={1}>
                     <Box flex={2}>
@@ -140,7 +147,7 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
                             id="filled-required-title"
                             className="titleField"
                             label="Title"
-                            variant="filled"
+                            variant="outlined"
                             name="title"
                             value={newPromise.title}
                             onChange={handleChange}
@@ -152,7 +159,7 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
                             required
                             id="filled-required-attester"
                             label="Attester Public Address"
-                            variant="filled"
+                            variant="outlined"
                             name="attester"
                             value={newPromise.attester}
                             onChange={handleChange}
@@ -166,7 +173,7 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
                     label="Description"
                     multiline
                     rows={10}
-                    variant="filled"
+                    variant="outlined"
                     name="description"
                     value={newPromise.description}
                     onChange={handleChange}
