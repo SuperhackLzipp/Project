@@ -11,7 +11,7 @@ import {
     Button,
     Box,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
 
 export const PartyPromisesAppBar: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -33,23 +33,6 @@ export const PartyPromisesAppBar: React.FC = () => {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    {/* <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => setDrawerOpen(true)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
-                    >
-                        MyApp
-                    </Typography> */}
                     <IconButton
                         size="large"
                         edge="start"
@@ -58,7 +41,7 @@ export const PartyPromisesAppBar: React.FC = () => {
                         sx={{ mr: 2 }}
                         onClick={() => setDrawerOpen(true)}
                     >
-                        <MenuIcon />
+                        <HomeIcon />
                     </IconButton>
                     <Typography
                         variant="h6"
@@ -67,9 +50,9 @@ export const PartyPromisesAppBar: React.FC = () => {
                     >
                         MyApp
                     </Typography>
-                    {/* <Button color="inherit">Create Program</Button>
+                    <Button color="inherit">Create Program</Button>
                     <Button color="inherit">Login</Button>
-                    <Button color="inherit">Signup</Button> */}
+                    <Button color="inherit">Signup</Button>
                 </Toolbar>
             </AppBar>
             {/* <Drawer
