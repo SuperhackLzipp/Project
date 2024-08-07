@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import CreatePartyProgramPage from "./pages/Create";
 import DonationPage from "./pages/Donate";
 import Contact, { AttestationPage } from "./pages/Attest";
+import EditPartyProgramPage from "./pages/Edit";
 import theme from "./theme";
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
                         <Route
                             path="/create"
                             element={<CreatePartyProgramPage />}
+                        />
+						<Route
+                            path="/edit"
+                            element={<EditPartyProgramPage />}
                         />
                     </Routes>
                 </Router>
