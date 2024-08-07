@@ -1,7 +1,7 @@
 {
     "name": "AddressTrackerBackend",
     "build": {
-        "dockerfile": "Dockerfile.devcontainer"
+        "dockerfile": "Dockerfile"
     },
     "mounts": [
         "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
@@ -27,10 +27,13 @@
                 "esbenp.prettier-vscode",
 
                 // react
-                // "dbaeumer.vscode-eslint",
+                "dbaeumer.vscode-eslint",
                 "dsznajder.es7-react-js-snippets",
                 "ms-vscode.vscode-typescript-next",
-                "infeng.vscode-react-typescript"
+                "infeng.vscode-react-typescript",
+
+                // solidity
+                "juanblanco.solidity"
             ]
         }
     },
