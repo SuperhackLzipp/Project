@@ -103,8 +103,6 @@ const PromisesList: React.FC<PromisesListProps> = ({
     );
 };
 
-export default PromisesList;
-
 interface NewPromise {
     title: string;
     description: string;
@@ -165,3 +163,5 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
         </form>
     );
 };
+
+export default PartyPromisesForm;

@@ -14,9 +14,9 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{ flexGrow: 1, height: "100vh", display: "flex", flexDirection: "column" }}>
-                <Router>
+                {/* <Router> */}
                     <PartyPromisesAppBar />
-                    <nav>
+                    {/* <nav>
                         <ul>
                             <li>
                                 <Link to="/">Home</Link>
@@ -28,15 +28,15 @@ function App() {
                                 <Link to="/contact">Contact</Link>
                             </li>
                         </ul>
-                    </nav>
-                    <Routes>
+                    </nav> */}
+                    {/* <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/donate" element={<DonationPage />} />
                         <Route path="/attest" element={<AttestationPage />} />
                         <Route path="/create" element={<CreatePartyProgramPage />} />
-                    </Routes>
-                </Router>
-                {/* <PartyPromisesForm /> */}
+                    </Routes> */}
+                {/* </Router> */}
+                <PartyPromisesForm />
             </Box>
         </ThemeProvider>
     );

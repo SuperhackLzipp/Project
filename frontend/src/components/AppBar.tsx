@@ -67,9 +67,9 @@ export const PartyPromisesAppBar: React.FC = () => {
                     >
                         MyApp
                     </Typography>
-                    <Button color="inherit">Create Program</Button>
+                    {/* <Button color="inherit">Create Program</Button>
                     <Button color="inherit">Login</Button>
-                    <Button color="inherit">Signup</Button>
+                    <Button color="inherit">Signup</Button> */}
                 </Toolbar>
             </AppBar>
             {/* <Drawer
