@@ -10,66 +10,81 @@ import {
     ListItemText,
     Button,
     Box,
+    Tooltip,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import WalletIcon from "@mui/icons-material/Wallet";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const PartyPromisesAppBar: React.FC = () => {
-    const [drawerOpen, setDrawerOpen] = useState(false);
-
-    const toggleDrawer =
-        (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event.type === "keydown" &&
-                ((event as React.KeyboardEvent).key === "Tab" ||
-                    (event as React.KeyboardEvent).key === "Shift")
-            ) {
-                return;
-            }
-
-            setDrawerOpen(open);
-        };
-
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
+        <AppBar position="static">
+            <Toolbar>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={() => {}}
+                >
+                    <HomeIcon />
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    MyApp
+                </Typography>
+                <Tooltip title="Create new Party Program">
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => setDrawerOpen(true)}
+                        onClick={() => {}}
                     >
-                        <HomeIcon />
+                        <NoteAddIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
+                </Tooltip>
+                <Tooltip title="Attest Party Promise">
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
                     >
-                        MyApp
-                    </Typography>
-                    <Button color="inherit">Create Program</Button>
-                    <Button color="inherit">Login</Button>
-                    <Button color="inherit">Signup</Button>
-                </Toolbar>
-            </AppBar>
-            {/* <Drawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={toggleDrawer(false)}
-            >
-                <List>
-                    <ListItem onClick={toggleDrawer(false)}>
-                        <ListItemText primary="Option 1" />
-                    </ListItem>
-                    <ListItem onClick={toggleDrawer(false)}>
-                        <ListItemText primary="Option 2" />
-                    </ListItem>
-                </List>
-            </Drawer> */}
-        </Box>
+                        <CheckCircleIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Donate for Party Promise">
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
+                    >
+                        <MonetizationOnIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Connect Wallet">
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
+                    >
+                        <WalletIcon />
+                    </IconButton>
+                </Tooltip>
+            </Toolbar>
+        </AppBar>
     );
 };
 
