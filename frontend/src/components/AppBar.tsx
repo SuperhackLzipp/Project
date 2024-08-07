@@ -13,6 +13,9 @@ import {
     Box,
     Tooltip,
 } from "@mui/material";
+
+import { useEthers, useEtherBalance } from "@usedapp/core";
+
 import HomeIcon from "@mui/icons-material/Home";
 import WalletIcon from "@mui/icons-material/Wallet";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -25,7 +28,7 @@ export const PartyPromisesAppBar: React.FC = () => {
 
     const isActive = (path: string) => location.pathname === path;
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Toolbar>
                 <IconButton
                     component={Link}
@@ -98,20 +101,31 @@ export const PartyPromisesAppBar: React.FC = () => {
                         <MonetizationOnIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Connect Wallet">
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={() => {}}
-                    >
-                        <WalletIcon />
-                    </IconButton>
-                </Tooltip>
+                {/* <Tooltip title="Connect Wallet"> */}
+                <ConnectButton />
+                {/* </Tooltip> */}
             </Toolbar>
         </AppBar>
+    );
+};
+
+export const ConnectButton = () => {
+    const { activateBrowserWallet, account } = useEthers();
+    const etherBalance = useEtherBalance(account);
+
+    console.log("Account:", account);
+    console.log("Ether Balance:", etherBalance);
+
+    return account ? (
+        <Box display="flex" alignItems="center">
+            <Typography color="white" variant="body1">
+                {etherBalance && JSON.stringify(etherBalance)} ETH
+            </Typography>
+        </Box>
+    ) : (
+        <IconButton color="inherit" onClick={() => activateBrowserWallet()}>
+            <WalletIcon />
+        </IconButton>
     );
 };
 
