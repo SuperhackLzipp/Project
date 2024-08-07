@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/PartyPromisesForm.css";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,6 +6,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { List, ListItem, ListItemText } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+
+// import "../styles/PartyPromisesForm.css";
 
 export const PartyPromisesForm: React.FC = () => {
     const [name, setName] = useState<string>("");

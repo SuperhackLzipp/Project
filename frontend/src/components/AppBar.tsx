@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
     AppBar,
     Toolbar,
@@ -20,6 +20,9 @@ import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const PartyPromisesAppBar: React.FC = () => {
+    const location = useLocation();
+
+    const isActive = (path: string) => location.pathname === path;
     return (
         <AppBar position="static">
             <Toolbar>
@@ -28,7 +31,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                     to="/"
                     size="large"
                     edge="start"
-                    color="inherit"
+                    // color="inherit"
+                    color={isActive("/") ? "secondary" : "inherit"}
                     aria-label="menu"
                     sx={{ mr: 2 }}
                     onClick={() => {}}
@@ -44,7 +48,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                         to="/create"
                         size="large"
                         edge="start"
-                        color="inherit"
+                        // color="inherit"
+                        color={isActive("/create") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
                         onClick={() => {}}
@@ -58,7 +63,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                         to="/attest"
                         size="large"
                         edge="start"
-                        color="inherit"
+                        // color="inherit"
+                        color={isActive("/attest") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
                         onClick={() => {}}
@@ -72,7 +78,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                         to="/donate"
                         size="large"
                         edge="start"
-                        color="inherit"
+                        // color="inherit"
+                        color={isActive("/donate") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
                         onClick={() => {}}
