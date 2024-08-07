@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
     AppBar,
     Toolbar,
@@ -23,6 +24,8 @@ export const PartyPromisesAppBar: React.FC = () => {
         <AppBar position="static">
             <Toolbar>
                 <IconButton
+                    component={Link}
+                    to="/"
                     size="large"
                     edge="start"
                     color="inherit"
@@ -37,6 +40,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                 </Typography>
                 <Tooltip title="Create new Party Program">
                     <IconButton
+                        component={Link}
+                        to="/create"
                         size="large"
                         edge="start"
                         color="inherit"
@@ -49,6 +54,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                 </Tooltip>
                 <Tooltip title="Attest Party Promise">
                     <IconButton
+                        component={Link}
+                        to="/attest"
                         size="large"
                         edge="start"
                         color="inherit"
@@ -61,6 +68,8 @@ export const PartyPromisesAppBar: React.FC = () => {
                 </Tooltip>
                 <Tooltip title="Donate for Party Promise">
                     <IconButton
+                        component={Link}
+                        to="/donate"
                         size="large"
                         edge="start"
                         color="inherit"
