@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
     AppBar,
     Toolbar,
@@ -10,83 +11,107 @@ import {
     ListItemText,
     Button,
     Box,
+    Tooltip,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import WalletIcon from "@mui/icons-material/Wallet";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EditIcon from "@mui/icons-material/Edit";
 
 export const PartyPromisesAppBar: React.FC = () => {
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const location = useLocation();
 
-    const toggleDrawer =
-        (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event.type === "keydown" &&
-                ((event as React.KeyboardEvent).key === "Tab" ||
-                    (event as React.KeyboardEvent).key === "Shift")
-            ) {
-                return;
-            }
-
-            setDrawerOpen(open);
-        };
-
+    const isActive = (path: string) => location.pathname === path;
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    {/* <IconButton
+        <AppBar position="static">
+            <Toolbar>
+                <IconButton
+                    component={Link}
+                    to="/"
+                    size="large"
+                    edge="start"
+                    color={isActive("/") ? "secondary" : "inherit"}
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                    onClick={() => {}}
+                >
+                    <HomeIcon />
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    MyApp
+                </Typography>
+                <Tooltip title="Create new Party Program">
+                    <IconButton
+                        component={Link}
+                        to="/create"
                         size="large"
                         edge="start"
-                        color="inherit"
+                        color={isActive("/create") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => setDrawerOpen(true)}
+                        onClick={() => {}}
                     >
-                        <MenuIcon />
+                        <NoteAddIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
+                </Tooltip>
+                <Tooltip title="Create new Party Program">
+                    <IconButton
+                        component={Link}
+                        to="/edit"
+                        size="large"
+                        edge="start"
+                        color={isActive("/edit") ? "secondary" : "inherit"}
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
                     >
-                        MyApp
-                    </Typography> */}
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Attest Party Promise">
+                    <IconButton
+                        component={Link}
+                        to="/attest"
+                        size="large"
+                        edge="start"
+                        color={isActive("/attest") ? "secondary" : "inherit"}
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
+                    >
+                        <CheckCircleIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Donate for Party Promise">
+                    <IconButton
+                        component={Link}
+                        to="/donate"
+                        size="large"
+                        edge="start"
+                        color={isActive("/donate") ? "secondary" : "inherit"}
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
+                        onClick={() => {}}
+                    >
+                        <MonetizationOnIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Connect Wallet">
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => setDrawerOpen(true)}
+                        onClick={() => {}}
                     >
-                        <MenuIcon />
+                        <WalletIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
-                    >
-                        MyApp
-                    </Typography>
-                    {/* <Button color="inherit">Create Program</Button>
-                    <Button color="inherit">Login</Button>
-                    <Button color="inherit">Signup</Button> */}
-                </Toolbar>
-            </AppBar>
-            {/* <Drawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={toggleDrawer(false)}
-            >
-                <List>
-                    <ListItem onClick={toggleDrawer(false)}>
-                        <ListItemText primary="Option 1" />
-                    </ListItem>
-                    <ListItem onClick={toggleDrawer(false)}>
-                        <ListItemText primary="Option 2" />
-                    </ListItem>
-                </List>
-            </Drawer> */}
-        </Box>
+                </Tooltip>
+            </Toolbar>
+        </AppBar>
     );
 };
 
