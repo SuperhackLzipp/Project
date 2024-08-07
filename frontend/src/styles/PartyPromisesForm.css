@@ -4,6 +4,16 @@
     border-radius: 10px;
 }
 
-#filled-required-title {
+#party-name-field {
+    font-size: larger;
+    font-weight: bold;
+}
+
+#title-field {
     flex-direction: row;
+}
+
+.scrollable-list {
+    max-height: 400px; /* Set your desired max height */
+    overflow-y: auto;
 }

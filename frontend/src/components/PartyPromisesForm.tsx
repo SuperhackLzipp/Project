@@ -50,7 +50,7 @@ export const PartyPromisesForm: React.FC = () => {
             <Stack direction="row" spacing={1}>
                 <TextField
                     required
-                    id="filled-required-attester"
+                    id="party-name-field"
                     label="Party Name"
                     variant="outlined"
                     name="attester"
@@ -64,12 +64,19 @@ export const PartyPromisesForm: React.FC = () => {
                     </IconButton>
                 </Tooltip>
             </Stack>
-            <PromisesList promises={promises} setPromises={setPromises} />
-            <PromiseForm
-                newPromise={newPromise}
-                handleChange={handleChange}
-                addPromise={addPromise}
-            />
+            <Stack direction="row">
+                <PromiseForm
+                    newPromise={newPromise}
+                    handleChange={handleChange}
+                    addPromise={addPromise}
+                />
+                {promises.length > 0 && (
+                    <PromisesList
+                        promises={promises}
+                        setPromises={setPromises}
+                    />
+                )}
+            </Stack>
         </Stack>
     );
 };
@@ -95,7 +102,7 @@ const PromisesList: React.FC<PromisesListProps> = ({
     };
 
     return (
-        <List className="formItem">
+        <List className="formItem scrollable-list">
             {promises.map((promise, index) => (
                 <ListItem key={index} divider>
                     <ListItemText
@@ -144,8 +151,7 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
                     <Box flex={2}>
                         <TextField
                             required
-                            id="filled-required-title"
-                            className="titleField"
+                            id="title-field"
                             label="Title"
                             variant="outlined"
                             name="title"
@@ -157,7 +163,7 @@ const PromiseForm: React.FC<PromiseFormProps> = ({
                     <Box flex={1}>
                         <TextField
                             required
-                            id="filled-required-attester"
+                            id="attester-field"
                             label="Attester Public Address"
                             variant="outlined"
                             name="attester"
