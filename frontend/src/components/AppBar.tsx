@@ -23,7 +23,17 @@ import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
 
-export const PartyPromisesAppBar: React.FC = () => {
+interface PartyPromisesAppBarProps {
+    account: string | null | undefined;
+    etherBalance: any; // You can replace `any` with the specific type if known
+    activateBrowserWallet: () => void;
+}
+
+export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
+    account,
+    etherBalance,
+    activateBrowserWallet,
+}) => {
     const location = useLocation();
 
     const isActive = (path: string) => location.pathname === path;
@@ -102,20 +112,28 @@ export const PartyPromisesAppBar: React.FC = () => {
                     </IconButton>
                 </Tooltip>
                 {/* <Tooltip title="Connect Wallet"> */}
-                <ConnectButton />
+                <ConnectButton
+                    account={account}
+                    etherBalance={etherBalance}
+                    activateBrowserWallet={activateBrowserWallet}
+                />
                 {/* </Tooltip> */}
             </Toolbar>
         </AppBar>
     );
 };
 
-export const ConnectButton = () => {
-    const { activateBrowserWallet, account } = useEthers();
-    const etherBalance = useEtherBalance(account);
+interface ConnectButtonProps {
+    account: string | null | undefined;
+    etherBalance: any; // You can replace `any` with the specific type if known
+    activateBrowserWallet: () => void;
+}
 
-    console.log("Account:", account);
-    console.log("Ether Balance:", etherBalance);
-
+export const ConnectButton: React.FC<ConnectButtonProps> = ({
+    account,
+    etherBalance,
+    activateBrowserWallet,
+}) => {
     return account ? (
         <Box display="flex" alignItems="center">
             <Typography color="white" variant="body1">

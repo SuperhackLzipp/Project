@@ -3,16 +3,17 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ThemeProvider, Box } from "@mui/material";
 import PartyPromisesAppBar from "./components/AppBar";
-import PartyPromisesForm from "./components/PartyPromisesForm";
 import Home from "./pages/Home";
 import CreatePartyProgramPage from "./pages/Create";
 import DonationPage from "./pages/Donate";
-import Contact, { AttestationPage } from "./pages/Attest";
+import { AttestationPage } from "./pages/Attest";
 import EditPartyProgramPage from "./pages/Edit";
 import theme from "./theme";
+import { useEthers, useEtherBalance } from "@usedapp/core";
 
 function App() {
-    const [account, setAccount] = useState<string>();
+    const { activateBrowserWallet, account } = useEthers();
+    const etherBalance = useEtherBalance(account);
 
     return (
         <ThemeProvider theme={theme}>
@@ -25,7 +26,11 @@ function App() {
                 }}
             >
                 <Router>
-                    <PartyPromisesAppBar />
+                    <PartyPromisesAppBar
+                        account={account}
+                        etherBalance={etherBalance}
+                        activateBrowserWallet={activateBrowserWallet}
+                    />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/donate" element={<DonationPage />} />
