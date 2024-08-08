@@ -1,8 +1,14 @@
-export const EditPartyPromisePage = () => {
+import React, { useState } from "react";
+import AddressInputForm from "../components/AddressInputForm";
+
+export const EditPartyPromisePage: React.FC = () => {
+    const [contractAddress, setContractAddress] = useState<string>("");
+
     return (
-        <div>
-            <h1>Edit Party Promise</h1>
-        </div>
+        <AddressInputForm
+            contractAddress={contractAddress}
+            setContractAddress={setContractAddress}
+        />
     );
 };
 

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import AddressInputForm from "../components/AddressInputForm";
 
 export const DonationPage: React.FC = () => {
