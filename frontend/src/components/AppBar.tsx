@@ -48,7 +48,6 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                     color={isActive("/") ? "secondary" : "inherit"}
                     aria-label="menu"
                     sx={{ mr: 2 }}
-                    onClick={() => {}}
                 >
                     <HomeIcon />
                 </IconButton>
@@ -64,7 +63,6 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                         color={isActive("/create") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => {}}
                     >
                         <NoteAddIcon />
                     </IconButton>
@@ -78,7 +76,6 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                         color={isActive("/edit") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => {}}
                     >
                         <EditIcon />
                     </IconButton>
@@ -92,7 +89,6 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                         color={isActive("/attest") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => {}}
                     >
                         <CheckCircleIcon />
                     </IconButton>
@@ -106,18 +102,15 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                         color={isActive("/donate") ? "secondary" : "inherit"}
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={() => {}}
                     >
                         <MonetizationOnIcon />
                     </IconButton>
                 </Tooltip>
-                {/* <Tooltip title="Connect Wallet"> */}
                 <ConnectButton
                     account={account}
                     etherBalance={etherBalance}
                     activateBrowserWallet={activateBrowserWallet}
                 />
-                {/* </Tooltip> */}
             </Toolbar>
         </AppBar>
     );

@@ -1,7 +1,7 @@
 {
     "name": "AddressTrackerBackend",
     "build": {
-        "dockerfile": "Dockerfile"
+        "dockerfile": "Dockerfile.devcontainer"
     },
     "mounts": [
         "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
