@@ -17,7 +17,6 @@ export const DonationPage: React.FC = () => {
 interface AddressInputFormProps {
     contractAddress: string;
     setContractAddress: React.Dispatch<React.SetStateAction<string>>;
-    // isAddressValid: boolean | null;
 }
 
 const AddressInputForm: React.FC<AddressInputFormProps> = ({
