@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 
 export const DonationPage: React.FC = () => {
     const [contractAddress, setContractAddress] = useState<string>("");
+    const [validAddressSet, setValidAddressSet] = useState<boolean>(false);
 
     return (
         <Box
@@ -13,10 +14,11 @@ export const DonationPage: React.FC = () => {
             minHeight="100vh"
             padding={1}
         >
-            {contractAddress === "" ? (
+            {validAddressSet === false ? (
                 <AddressInputForm
                     contractAddress={contractAddress}
                     setContractAddress={setContractAddress}
+                    setValidAddressSet={setValidAddressSet}
                 />
             ) : (
                 <></>

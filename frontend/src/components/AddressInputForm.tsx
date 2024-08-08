@@ -6,21 +6,24 @@ import { isAddress } from "web3-validator";
 interface AddressInputFormProps {
     contractAddress: string;
     setContractAddress: React.Dispatch<React.SetStateAction<string>>;
+    setValidAddressSet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AddressInputForm: React.FC<AddressInputFormProps> = ({
     contractAddress,
     setContractAddress,
+    setValidAddressSet,
 }) => {
     const [isAddressValid, setIsAddressValid] = useState<boolean | null>(null);
-
     const loadContract = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!isAddress(contractAddress)) {
             setIsAddressValid(false);
+            setValidAddressSet(false);
             return;
         }
         setIsAddressValid(true);
+        setValidAddressSet(true);
     };
 
     return (
