@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { isAddress } from "web3-validator";
+import Web3 from "web3";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,6 +9,8 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { List, ListItem, ListItemText, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+
+import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFactory.json";
 
 import "../styles/PartyPromisesForm.css";
 
@@ -53,12 +56,43 @@ export const PartyPromisesForm: React.FC = () => {
 
     const uploadPromises = async () => {
         name;
-        const expirationDateInt = new Date(expirationDate);
-        const unixTime = Math.floor(expirationDateInt.getTime() / 1000);
+        const unixTime = Math.floor(new Date(expirationDate).getTime() / 1000);
         const titles = promises.map((promise) => promise.title);
         const descriptions = promises.map((promise) => promise.description);
+        const partyProgramURL = "example";
         const attesters = promises.map((promise) => promise.attester);
-		// call smrtcontract here
+
+        // call smrtcontract here
+        if ((window as any).ethereum) {
+            const web3 = new Web3((window as any).ethereum);
+            await (window as any).ethereum.enable();
+
+            // Contract address and ABI
+            const contractAddress = process.env.ETH_FACTORY_CONTRACT_ADDRESS;
+            const contract = new web3.eth.Contract(ABI.abi, contractAddress);
+
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const account = accounts[0];
+
+                // Call the CreateParty method
+                const tx = await contract.methods
+                    .CreateParty(
+                        Web3.utils.asciiToHex(name), // Assuming partyName is defined
+                        unixTime,
+                        partyProgramURL, // Assuming partyProgramURL is defined
+                        titles,
+                        descriptions
+                    )
+                    .send({ from: account });
+
+                console.log("Party created successfully:", tx);
+            } catch (error) {
+                console.error("Error creating party:", error);
+            }
+        } else {
+            console.error("Ethereum provider not found");
+        }
     };
 
     const checkDateValid = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +126,12 @@ export const PartyPromisesForm: React.FC = () => {
                     fullWidth
                 />
                 <Tooltip title="Upload the Promises">
-                    <IconButton color="success" size="large" edge="start">
+                    <IconButton
+                        color="success"
+                        size="large"
+                        edge="start"
+                        onClick={uploadPromises}
+                    >
                         <FileUploadIcon />
                     </IconButton>
                 </Tooltip>
