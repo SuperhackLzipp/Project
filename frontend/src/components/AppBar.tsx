@@ -67,7 +67,7 @@ export const PartyPromisesAppBar: React.FC<PartyPromisesAppBarProps> = ({
                         <NoteAddIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Create new Party Program">
+                <Tooltip title="Edit existing Program">
                     <IconButton
                         component={Link}
                         to="/edit"
