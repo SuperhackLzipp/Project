@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, IconButton, TextField, Tooltip } from "@mui/material";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
+import SearchIcon from "@mui/icons-material/Search";
 import { isAddress } from "web3-validator";
 
 interface AddressInputFormProps {
@@ -67,7 +67,7 @@ const AddressInputForm: React.FC<AddressInputFormProps> = ({
                             edge="start"
                             type="submit"
                         >
-                            <FileUploadIcon />
+                            <SearchIcon />
                         </IconButton>
                     </Tooltip>
                 </Stack>
