@@ -17,6 +17,8 @@ import {
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
+import CopyableTextfield from "./CopyableTextfield";
+
 import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFactory.json";
 
 import "../styles/PartyPromisesForm.css";
@@ -35,7 +37,7 @@ export const PartyPromisesForm: React.FC = () => {
     const [isAddressValid, setIsAddressValid] = useState<boolean>(true);
     const [isTitleUnique, setIsTitleUnique] = useState<boolean>(true);
     const [isDateValid, setIsDateValid] = useState<boolean>(false);
-    const [promiseAddress, setPromiseAddress] = useState<string>("");
+    const [promiseAddress, setPromiseAddress] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalTitle, setModalTitle] = useState("");
     const [modalDescription, setModalDescription] = useState("");
@@ -116,8 +118,8 @@ export const PartyPromisesForm: React.FC = () => {
                     )
                     .send({ from: account });
                 if (receipt.events && receipt.events.PartyCreated) {
-                    const address =
-                        receipt.events.PartyCreated.returnValues.partyAddress as string;
+                    const address = receipt.events.PartyCreated.returnValues
+                        .partyAddress as string;
                     setPromiseAddress(address);
                     setModalTitle("Success");
                     setModalDescription(
@@ -248,16 +250,25 @@ export const PartyPromisesForm: React.FC = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box id="modal">
-                    <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h2"
-                    >
-                        {modalTitle}
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        {modalDescription}
-                    </Typography>
+                    <Stack display="flex" flex-direction="column">
+                        <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2"
+                        >
+                            {modalTitle}
+                        </Typography>
+                        {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            {modalDescription}
+                        </Typography> */}
+                        {promiseAddress !== null ? (
+                            <CopyableTextfield value={promiseAddress} />
+                        ) : (
+                            <Typography>
+                                "Party Promises could not be created"
+                            </Typography>
+                        )}
+                    </Stack>
                 </Box>
             </Modal>
         </>
