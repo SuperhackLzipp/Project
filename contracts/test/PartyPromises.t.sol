@@ -116,17 +116,31 @@ contract PartyPromisesTest is Test {
      * The following tests will test all promise-related functions
      */
     function test_AddPromise() public {
-        bytes32 _promiseTitle = "Promise3";
-        string memory _description = "Description 3";
-        partyPromises.AddPromise(_promiseTitle, _description);
+        // bytes32 _promiseTitle = "Promise3";
+        // string memory _description = "Description 3";
+        // partyPromises.AddPromise(_promiseTitle, _description);
+        bytes32[] memory _uploadPromiseTitles = new bytes32[](2);
+        string[] memory _uploadDescriptions = new string[](2);
+
+        // Assign values to the arrays
+        _uploadPromiseTitles[0] = "Promise3";
+        _uploadPromiseTitles[1] = "Promise4";
+        _uploadDescriptions[0] = "Description 3";
+        _uploadDescriptions[1] = "Description 4";
+
+// Call the AddPromises function with the arrays
+partyPromises.AddPromises(promiseTitles, descriptions);
 
         bytes32[] memory _promiseTitles;
         string[] memory _descriptions;
         bool[] memory _completions;
         (_promiseTitles, _descriptions, _completions) = partyPromises.GetPromises();
-        assertEq(_promiseTitles[2], _promiseTitle);
-        assertEq(_descriptions[2], _description);
+        assertEq(_promiseTitles[2], _uploadPromiseTitles[0]);
+        assertEq(_promiseTitles[3], _uploadPromiseTitles[1]);
+        assertEq(_descriptions[2], _uploadDescriptions[0]);
+        assertEq(_descriptions[3], _uploadDescriptions[1]);
         assertEq(_completions[2], false);
+        assertEq(_completions[3], false);
     }
 
     function test_CompletePromise() public {

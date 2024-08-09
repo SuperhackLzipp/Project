@@ -5,10 +5,10 @@ import { SchemaResolver } from "@ethereum-attestation-service/eas-contracts/cont
 import { IEAS, Attestation } from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
 
 /**
- * @title AttesterResolver
+ * @title Resolver
  * @notice A sample schema resolver that checks whether the attestation is from a specific attester.
  */
-contract AttesterResolver is SchemaResolver {
+contract Resolver is SchemaResolver {
     address private immutable targetAttester;
 
     constructor(IEAS eas, address _targetAttester) SchemaResolver(eas) {

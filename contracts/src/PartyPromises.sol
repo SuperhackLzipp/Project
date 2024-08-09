@@ -90,10 +90,11 @@ contract PartyPromises {
         _;
     }
 
-    modifier nonexistant(bytes32[] _titles) {
+    modifier nonexistant(bytes32[] calldata _titles) {
         for (uint256 i = 0; i < _titles.length; i++) {
             require(bytes(promises[_titles[i]].description).length == 0, "Promise already exists");
         }
+        _;
     }
 
     modifier notDonated() {
@@ -129,10 +130,10 @@ contract PartyPromises {
 
     /**
      * Adds one or more promises to the list of promises
-     * @param _title - title of the promise
-     * @param _description - description of the promise
+     * @param _titles - title of the promise
+     * @param _descriptions - description of the promise
      */
-    function AddPromises(bytes32[] _titles, string[] calldata _description)
+    function AddPromises(bytes32[] calldata _titles, string[] calldata _descriptions)
         external
         notExpired
         onlyOwner
@@ -140,9 +141,9 @@ contract PartyPromises {
     {
         for (uint256 i = 0; i < _titles.length; i++) {
             promiseTitles.push(_titles[i]);
-            promises[_titles[i]].description = _description[i];
+            promises[_titles[i]].description = _descriptions[i];
             promises[_titles[i]].completed = false;
-            emit PromiseAdded(_title, _description);
+            emit PromiseAdded(_titles[i], _descriptions[i]);
         }
     }
 
