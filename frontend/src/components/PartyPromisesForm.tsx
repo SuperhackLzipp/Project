@@ -22,6 +22,8 @@ import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFa
 
 import "../styles/PartyPromisesForm.css";
 
+import { ETH_SEPOLIA_FACTORY_ADDRESS } from "../config/config";
+
 interface PartyPromisesFormProps {
     setContractCreated: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -71,19 +73,10 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
     };
 
     const uploadPromises = async () => {
-        if (name === null || !name.trim()) {
+        if (name === null || !name.trim()) return;
+        if (expirationDate === null || !expirationDate.trim() || !isDateValid)
             return;
-        }
-
-        if (expirationDate === null || !expirationDate.trim() || !isDateValid) {
-            console.error("Valid expiration date is required");
-            return;
-        }
-
-        if (promises.length === 0) {
-            console.error("At least one promise is required");
-            return;
-        }
+        if (promises.length === 0) return;
 
         const unixTime = Math.floor(new Date(expirationDate).getTime() / 1000);
         const titles = promises.map((promise) => promise.title);
@@ -96,10 +89,10 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
             const web3 = new Web3((window as any).ethereum);
             await (window as any).ethereum.enable();
 
-            // Contract address and ABI
-            const contractAddress =
-                "0xb7e0f07a837e95c26f86e8230c79dfe461f06b2a";
-            const contract = new web3.eth.Contract(ABI.abi, contractAddress);
+            const contract = new web3.eth.Contract(
+                ABI.abi,
+                ETH_SEPOLIA_FACTORY_ADDRESS
+            );
 
             try {
                 const accounts = await web3.eth.getAccounts();
@@ -109,7 +102,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                     .CreateParty(
                         Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
                         unixTime,
-                        partyProgramURL, // Assuming partyProgramURL is defined
+                        partyProgramURL,
                         titles.map((title) =>
                             Web3.utils.padRight(
                                 Web3.utils.asciiToHex(title),
