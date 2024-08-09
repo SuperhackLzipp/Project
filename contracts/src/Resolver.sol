@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
-import { SchemaResolver } from "../SchemaResolver.sol";
-import { IEAS, Attestation } from "../../IEAS.sol";
+import { SchemaResolver } from "@ethereum-attestation-service/eas-contracts/contracts/resolver/SchemaResolver.sol";
+// contracts/node_modules/@ethereum-attestation-service/eas-contracts/contracts/resolver/SchemaResolver.sol
+import { IEAS, Attestation } from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
 
 /**
  * @title AttesterResolver
