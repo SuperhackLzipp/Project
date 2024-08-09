@@ -16,14 +16,19 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-
 import CopyableTextfield from "./CopyableTextfield";
 
 import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFactory.json";
 
 import "../styles/PartyPromisesForm.css";
 
-export const PartyPromisesForm: React.FC = () => {
+interface PartyPromisesFormProps {
+    setContractCreated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
+    setContractCreated,
+}) => {
     const [name, setName] = useState<string | null>(null);
     const [expirationDate, setExpirationDate] = useState<string | null>(null);
     const [promises, setPromises] = useState<
@@ -40,7 +45,6 @@ export const PartyPromisesForm: React.FC = () => {
     const [promiseAddress, setPromiseAddress] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalTitle, setModalTitle] = useState("");
-    const [modalDescription, setModalDescription] = useState("");
 
     const addPromise = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -95,76 +99,37 @@ export const PartyPromisesForm: React.FC = () => {
             // Contract address and ABI
             const contractAddress =
                 "0xb7e0f07a837e95c26f86e8230c79dfe461f06b2a";
-            console.log("contractAddress", contractAddress);
             const contract = new web3.eth.Contract(ABI.abi, contractAddress);
 
             try {
                 const accounts = await web3.eth.getAccounts();
-                console.log("accounts", accounts);
                 const account = accounts[0];
 
-                // Call the CreateParty method
-                console.log("Creating party...");
-                // const receipt = await contract.methods
-                //     .CreateParty(
-                //         Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
-                //         unixTime,
-                //         partyProgramURL, // Assuming partyProgramURL is defined
-                //         titles.map((title) =>
-                //             Web3.utils.padRight(
-                //                 Web3.utils.asciiToHex(title),
-                //                 64
-                //             )
-                //         ), // Convert each title to bytes32
-                //         descriptions
-                //     )
-                //     .send({ from: account });
-                let receipt: any;
-                try {
-                    receipt = await contract.methods
-                        .CreateParty(
+                const receipt = await contract.methods
+                    .CreateParty(
+                        Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
+                        unixTime,
+                        partyProgramURL, // Assuming partyProgramURL is defined
+                        titles.map((title) =>
                             Web3.utils.padRight(
-                                Web3.utils.asciiToHex(name),
+                                Web3.utils.asciiToHex(title),
                                 64
-                            ), // Convert name to bytes32
-                            unixTime,
-                            partyProgramURL, // Assuming partyProgramURL is defined
-                            titles.map((title) =>
-                                Web3.utils.padRight(
-                                    Web3.utils.asciiToHex(title),
-                                    64
-                                )
-                            ), // Convert each title to bytes32
-                            descriptions
-                        )
-                        .send({ from: account });
-
-                    // If the call succeeds, log the receipt and proceed with further actions
-                    console.log("Transaction receipt:", receipt);
-                    // Continue with further actions here
-                } catch (error) {
-                    // Log the error to understand what went wrong
-                    console.error("Error creating party:", error);
-                    // Handle the error appropriately, e.g., show an error message to the user
-                }
-                console.log("receipt", receipt);
+                            )
+                        ), // Convert each title to bytes32
+                        descriptions
+                    )
+                    .send({ from: account });
                 if (receipt.events && receipt.events.PartyCreated) {
                     const address = receipt.events.PartyCreated
                         .returnValues[0] as string;
-                    console.log("receipt", receipt);
                     setPromiseAddress(address);
                     setModalTitle("Success");
-                    setModalDescription(
-                        "Your Party Promises have been created at " + address
-                    );
+                    setContractCreated(true);
                 } else {
                     throw new Error("PartyCreated event not found in receipt");
                 }
             } catch (error) {
                 setModalTitle("Error");
-                setModalDescription(
-                    "Error creating party: " + (error as Error).message
-                );
             } finally {
                 setIsModalOpen(true);
             }
