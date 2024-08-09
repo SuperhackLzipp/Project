@@ -15,8 +15,8 @@ import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFa
 import "../styles/PartyPromisesForm.css";
 
 export const PartyPromisesForm: React.FC = () => {
-    const [name, setName] = useState<string>("");
-    const [expirationDate, setExpirationDate] = useState<string>("");
+    const [name, setName] = useState<string | null>(null);
+    const [expirationDate, setExpirationDate] = useState<string | null>(null);
     const [promises, setPromises] = useState<
         Array<{ title: string; description: string; attester: string }>
     >([]);
@@ -27,7 +27,7 @@ export const PartyPromisesForm: React.FC = () => {
     }>({ title: "", description: "", attester: "" });
     const [isAddressValid, setIsAddressValid] = useState<boolean>(true);
     const [isTitleUnique, setIsTitleUnique] = useState<boolean>(true);
-    const [isDateValid, setIsDateValid] = useState<boolean>(true);
+    const [isDateValid, setIsDateValid] = useState<boolean>(false);
     const [promiseAddress, setPromiseAddress] = useState<string>("");
 
     const addPromise = (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +45,7 @@ export const PartyPromisesForm: React.FC = () => {
             addressIsValid === true
         ) {
             setPromises([...promises, newPromise]);
-            setNewPromise({ title: "", description: "", attester: "" }); // Reset input fields after adding
+            setNewPromise({ title: "", description: "", attester: "" });
             setIsTitleUnique(true);
             setIsAddressValid(true);
         }
@@ -55,20 +55,34 @@ export const PartyPromisesForm: React.FC = () => {
     };
 
     const uploadPromises = async () => {
-        name;
+        if (name === null || !name.trim()) {
+            return;
+        }
+
+        if (expirationDate === null || !expirationDate.trim() || !isDateValid) {
+            console.error("Valid expiration date is required");
+            return;
+        }
+
+        if (promises.length === 0) {
+            console.error("At least one promise is required");
+            return;
+        }
+
         const unixTime = Math.floor(new Date(expirationDate).getTime() / 1000);
         const titles = promises.map((promise) => promise.title);
         const descriptions = promises.map((promise) => promise.description);
         const partyProgramURL = "example";
         const attesters = promises.map((promise) => promise.attester);
 
-        // call smrtcontract here
+        // call smartcontract here
         if ((window as any).ethereum) {
             const web3 = new Web3((window as any).ethereum);
             await (window as any).ethereum.enable();
 
             // Contract address and ABI
-            const contractAddress = process.env.ETH_FACTORY_CONTRACT_ADDRESS;
+            const contractAddress = import.meta.env
+                .VITE_ETH_FACTORY_CONTRACT_ADDRESS;
             const contract = new web3.eth.Contract(ABI.abi, contractAddress);
 
             try {
@@ -76,6 +90,7 @@ export const PartyPromisesForm: React.FC = () => {
                 const account = accounts[0];
 
                 // Call the CreateParty method
+                console.log("Creating party...");
                 const tx = await contract.methods
                     .CreateParty(
                         Web3.utils.asciiToHex(name), // Assuming partyName is defined
@@ -115,16 +130,31 @@ export const PartyPromisesForm: React.FC = () => {
     return (
         <Stack direction="column" spacing={1} padding={1} className="stack">
             <Stack direction="row" spacing={1}>
-                <TextField
-                    required
-                    id="party-name-field"
-                    label="Party Name"
-                    variant="outlined"
-                    name="attester"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                />
+                {name === null || name.trim() ? (
+                    <TextField
+                        required
+                        id="party-name-field"
+                        label="Party Name"
+                        variant="outlined"
+                        name="attester"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        fullWidth
+                    />
+                ) : (
+                    <TextField
+                        required
+                        error
+                        id="party-name-field"
+                        label="Party Name"
+                        helperText="Name is required"
+                        variant="outlined"
+                        name="attester"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        fullWidth
+                    />
+                )}
                 <Tooltip title="Upload the Promises">
                     <IconButton
                         color="success"
@@ -136,7 +166,7 @@ export const PartyPromisesForm: React.FC = () => {
                     </IconButton>
                 </Tooltip>
             </Stack>
-            {isDateValid ? (
+            {expirationDate === null || expirationDate.trim() ? (
                 <TextField
                     required
                     id="date-field"
