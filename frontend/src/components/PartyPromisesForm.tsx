@@ -125,6 +125,13 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                     setPromiseAddress(address);
                     setModalTitle("Success");
                     setContractCreated(true);
+                    setName(null);
+                    setExpirationDate(null);
+                    setPromises([]);
+                    setNewPromise({ title: "", description: "", attester: "" });
+                    setIsAddressValid(true);
+                    setIsTitleUnique(true);
+                    setIsDateValid(false);
                 } else {
                     throw new Error("PartyCreated event not found in receipt");
                 }
@@ -242,7 +249,10 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
             </Stack>
             <Modal
                 open={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setPromiseAddress(null);
+                }}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
