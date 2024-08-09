@@ -27,6 +27,7 @@ export const CreatePartyProgramPage: React.FC = () => {
                     color="inherit"
                     startIcon={<NoteAddIcon />}
                     sx={{ mr: 2 }}
+                    onClick={() => setContractCreated(false)}
                 >
                     Create new Party Program
                 </Button>
