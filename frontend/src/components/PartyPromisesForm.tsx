@@ -6,7 +6,14 @@ import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import { List, ListItem, ListItemText, Tooltip } from "@mui/material";
+import {
+    List,
+    ListItem,
+    ListItemText,
+    Modal,
+    Tooltip,
+    Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -29,6 +36,9 @@ export const PartyPromisesForm: React.FC = () => {
     const [isTitleUnique, setIsTitleUnique] = useState<boolean>(true);
     const [isDateValid, setIsDateValid] = useState<boolean>(false);
     const [promiseAddress, setPromiseAddress] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalDescription, setModalDescription] = useState("");
 
     const addPromise = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -91,22 +101,39 @@ export const PartyPromisesForm: React.FC = () => {
 
                 // Call the CreateParty method
                 console.log("Creating party...");
-                const tx = await contract.methods
+                const receipt = await contract.methods
                     .CreateParty(
-                        Web3.utils.asciiToHex(name), // Assuming partyName is defined
+                        Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
                         unixTime,
                         partyProgramURL, // Assuming partyProgramURL is defined
-                        titles,
+                        titles.map((title) =>
+                            Web3.utils.padRight(
+                                Web3.utils.asciiToHex(title),
+                                64
+                            )
+                        ), // Convert each title to bytes32
                         descriptions
                     )
                     .send({ from: account });
-
-                console.log("Party created successfully:", tx);
+                if (receipt.events && receipt.events.PartyCreated) {
+                    const address =
+                        receipt.events.PartyCreated.returnValues.partyAddress as string;
+                    setPromiseAddress(address);
+                    setModalTitle("Success");
+                    setModalDescription(
+                        "Your Party Promises have been created at " + address
+                    );
+                } else {
+                    throw new Error("PartyCreated event not found in receipt");
+                }
             } catch (error) {
-                console.error("Error creating party:", error);
+                setModalTitle("Error");
+                setModalDescription(
+                    "Error creating party: " + (error as Error).message
+                );
+            } finally {
+                setIsModalOpen(true);
             }
-        } else {
-            console.error("Ethereum provider not found");
         }
     };
 
@@ -128,91 +155,112 @@ export const PartyPromisesForm: React.FC = () => {
     };
 
     return (
-        <Stack direction="column" spacing={1} padding={1} className="stack">
-            <Stack direction="row" spacing={1}>
-                {name === null || name.trim() ? (
+        <>
+            <Stack direction="column" spacing={1} padding={1} className="stack">
+                <Stack direction="row" spacing={1}>
+                    {name === null || name.trim() ? (
+                        <TextField
+                            required
+                            id="party-name-field"
+                            label="Party Name"
+                            variant="outlined"
+                            name="attester"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            fullWidth
+                        />
+                    ) : (
+                        <TextField
+                            required
+                            error
+                            id="party-name-field"
+                            label="Party Name"
+                            helperText="Name is required"
+                            variant="outlined"
+                            name="attester"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            fullWidth
+                        />
+                    )}
+                    <Tooltip title="Upload the Promises">
+                        <IconButton
+                            color="success"
+                            size="large"
+                            edge="start"
+                            onClick={uploadPromises}
+                        >
+                            <FileUploadIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
+                {expirationDate === null || expirationDate.trim() ? (
                     <TextField
                         required
-                        id="party-name-field"
-                        label="Party Name"
-                        variant="outlined"
-                        name="attester"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        id="date-field"
+                        label="Expiration Date"
+                        type="date"
+                        name="promiseDate"
+                        value={expirationDate}
+                        onChange={checkDateValid}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
                         fullWidth
                     />
                 ) : (
                     <TextField
                         required
                         error
-                        id="party-name-field"
-                        label="Party Name"
-                        helperText="Name is required"
-                        variant="outlined"
-                        name="attester"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        id="date-field"
+                        label="Expiration Date"
+                        helperText="Must be a future date"
+                        type="date"
+                        name="promiseDate"
+                        value={expirationDate}
+                        onChange={checkDateValid}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
                         fullWidth
                     />
                 )}
-                <Tooltip title="Upload the Promises">
-                    <IconButton
-                        color="success"
-                        size="large"
-                        edge="start"
-                        onClick={uploadPromises}
-                    >
-                        <FileUploadIcon />
-                    </IconButton>
-                </Tooltip>
-            </Stack>
-            {expirationDate === null || expirationDate.trim() ? (
-                <TextField
-                    required
-                    id="date-field"
-                    label="Expiration Date"
-                    type="date"
-                    name="promiseDate"
-                    value={expirationDate}
-                    onChange={checkDateValid}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    fullWidth
-                />
-            ) : (
-                <TextField
-                    required
-                    error
-                    id="date-field"
-                    label="Expiration Date"
-                    helperText="Must be a future date"
-                    type="date"
-                    name="promiseDate"
-                    value={expirationDate}
-                    onChange={checkDateValid}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    fullWidth
-                />
-            )}
-            <Stack direction="row">
-                <PromiseForm
-                    newPromise={newPromise}
-                    isAddressValid={isAddressValid}
-                    isTitleUnique={isTitleUnique}
-                    handleChange={handleChange}
-                    addPromise={addPromise}
-                />
-                {promises.length > 0 && (
-                    <PromisesList
-                        promises={promises}
-                        setPromises={setPromises}
+                <Stack direction="row">
+                    <PromiseForm
+                        newPromise={newPromise}
+                        isAddressValid={isAddressValid}
+                        isTitleUnique={isTitleUnique}
+                        handleChange={handleChange}
+                        addPromise={addPromise}
                     />
-                )}
+                    {promises.length > 0 && (
+                        <PromisesList
+                            promises={promises}
+                            setPromises={setPromises}
+                        />
+                    )}
+                </Stack>
             </Stack>
-        </Stack>
+            <Modal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box id="modal">
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                    >
+                        {modalTitle}
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        {modalDescription}
+                    </Typography>
+                </Box>
+            </Modal>
+        </>
     );
 };
 
