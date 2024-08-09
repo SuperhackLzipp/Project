@@ -93,33 +93,65 @@ export const PartyPromisesForm: React.FC = () => {
             await (window as any).ethereum.enable();
 
             // Contract address and ABI
-            const contractAddress = import.meta.env
-                .VITE_ETH_FACTORY_CONTRACT_ADDRESS;
+            const contractAddress =
+                "0xb7e0f07a837e95c26f86e8230c79dfe461f06b2a";
+            console.log("contractAddress", contractAddress);
             const contract = new web3.eth.Contract(ABI.abi, contractAddress);
 
             try {
                 const accounts = await web3.eth.getAccounts();
+                console.log("accounts", accounts);
                 const account = accounts[0];
 
                 // Call the CreateParty method
                 console.log("Creating party...");
-                const receipt = await contract.methods
-                    .CreateParty(
-                        Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
-                        unixTime,
-                        partyProgramURL, // Assuming partyProgramURL is defined
-                        titles.map((title) =>
+                // const receipt = await contract.methods
+                //     .CreateParty(
+                //         Web3.utils.padRight(Web3.utils.asciiToHex(name), 64), // Convert name to bytes32
+                //         unixTime,
+                //         partyProgramURL, // Assuming partyProgramURL is defined
+                //         titles.map((title) =>
+                //             Web3.utils.padRight(
+                //                 Web3.utils.asciiToHex(title),
+                //                 64
+                //             )
+                //         ), // Convert each title to bytes32
+                //         descriptions
+                //     )
+                //     .send({ from: account });
+                let receipt: any;
+                try {
+                    receipt = await contract.methods
+                        .CreateParty(
                             Web3.utils.padRight(
-                                Web3.utils.asciiToHex(title),
+                                Web3.utils.asciiToHex(name),
                                 64
-                            )
-                        ), // Convert each title to bytes32
-                        descriptions
-                    )
-                    .send({ from: account });
+                            ), // Convert name to bytes32
+                            unixTime,
+                            partyProgramURL, // Assuming partyProgramURL is defined
+                            titles.map((title) =>
+                                Web3.utils.padRight(
+                                    Web3.utils.asciiToHex(title),
+                                    64
+                                )
+                            ), // Convert each title to bytes32
+                            descriptions
+                        )
+                        .send({ from: account });
+
+                    // If the call succeeds, log the receipt and proceed with further actions
+                    console.log("Transaction receipt:", receipt);
+                    // Continue with further actions here
+                } catch (error) {
+                    // Log the error to understand what went wrong
+                    console.error("Error creating party:", error);
+                    // Handle the error appropriately, e.g., show an error message to the user
+                }
+                console.log("receipt", receipt);
                 if (receipt.events && receipt.events.PartyCreated) {
-                    const address = receipt.events.PartyCreated.returnValues
-                        .partyAddress as string;
+                    const address = receipt.events.PartyCreated
+                        .returnValues[0] as string;
+                    console.log("receipt", receipt);
                     setPromiseAddress(address);
                     setModalTitle("Success");
                     setModalDescription(
@@ -258,9 +290,6 @@ export const PartyPromisesForm: React.FC = () => {
                         >
                             {modalTitle}
                         </Typography>
-                        {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            {modalDescription}
-                        </Typography> */}
                         {promiseAddress !== null ? (
                             <CopyableTextfield value={promiseAddress} />
                         ) : (
