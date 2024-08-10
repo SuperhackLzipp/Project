@@ -31,60 +31,37 @@ const NewPromiseForm: React.FC<NewPromiseFormProps> = ({
         <form onSubmit={addPromise} className="stack">
             <Stack direction="column" spacing={1} padding={1}>
                 <Stack direction="row" spacing={1}>
-                    <Box flex={2}>
-                        {isTitleUnique == false ? (
-                            <TextField
-                                required
-                                error
-                                id="title-field"
-                                label="Title"
-                                helperText="Must be unique"
-                                variant="outlined"
-                                name="title"
-                                value={newPromise.title}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        ) : (
-                            <TextField
-                                required
-                                id="title-field"
-                                label="Title"
-                                variant="outlined"
-                                name="title"
-                                value={newPromise.title}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        )}
-                    </Box>
-                    <Box flex={1}>
-                        {isAddressValid === false ? (
-                            <TextField
-                                required
-                                error
-                                id="attester-field"
-                                label="Attester Public Address"
-                                helperText="Not a valid Address"
-                                variant="outlined"
-                                name="attester"
-                                value={newPromise.attester}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        ) : (
-                            <TextField
-                                required
-                                id="attester-field-error"
-                                label="Attester Public Address"
-                                variant="outlined"
-                                name="attester"
-                                value={newPromise.attester}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        )}
-                    </Box>
+                    <TextField
+                        required
+                        error={isTitleUnique === false}
+                        id="title-field"
+                        label="Title"
+                        helperText={
+                            isTitleUnique === false ? "Must be unique" : ""
+                        }
+                        variant="outlined"
+                        name="title"
+                        value={newPromise.title}
+                        onChange={handleChange}
+                        style={{ flex: 2 }}
+                    />
+                    <TextField
+                        required
+                        error={isAddressValid === false}
+                        id="attester-field"
+                        label="Attester Public Address"
+                        helperText={
+                            isAddressValid === false
+                                ? "Not a valid Address"
+                                : ""
+                        }
+                        variant="outlined"
+                        name="attester"
+                        value={newPromise.attester}
+                        onChange={handleChange}
+                        fullWidth
+                        style={{ flex: 1 }}
+                    />
                 </Stack>
                 <TextField
                     required

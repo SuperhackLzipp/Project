@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CopyableTextfield from "./CopyableTextfield";
 import NewPromiseForm from "./NewPromiseForm";
-import PromisesList from "./PromisesList";
+import NewPromisesList from "./NewPromisesList";
 
 import { ABI_FACTORY } from "../config/config.ts";
 
@@ -208,7 +208,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                         addPromise={addPromise}
                     />
                     {promises.length > 0 && (
-                        <PromisesList
+                        <NewPromisesList
                             promises={promises}
                             setPromises={setPromises}
                         />
