@@ -3,22 +3,15 @@ import { isAddress } from "web3-validator";
 import Web3 from "web3";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
-import {
-    List,
-    ListItem,
-    ListItemText,
-    Modal,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Modal, Tooltip, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CopyableTextfield from "./CopyableTextfield";
+import NewPromiseForm from "./NewPromiseForm";
+import PromisesList from "./PromisesList";
 
-import { ABI_FACTORY } from "../config/config.ts"
+import { ABI_FACTORY } from "../config/config.ts";
 
 import "../styles/PartyPromisesForm.css";
 
@@ -64,8 +57,6 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
         ) {
             setPromises([...promises, newPromise]);
             setNewPromise({ title: "", description: "", attester: "" });
-            setIsTitleUnique(true);
-            setIsAddressValid(true);
         }
 
         setIsAddressValid(addressIsValid);
@@ -217,7 +208,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                     />
                 )}
                 <Stack direction="row">
-                    <PromiseForm
+                    <NewPromiseForm
                         newPromise={newPromise}
                         isAddressValid={isAddressValid}
                         isTitleUnique={isTitleUnique}
@@ -269,156 +260,6 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                 </Box>
             </Modal>
         </>
-    );
-};
-
-interface Promise {
-    title: string;
-    description: string;
-    attester: string;
-}
-
-interface PromisesListProps {
-    promises: Promise[];
-    setPromises: React.Dispatch<React.SetStateAction<Promise[]>>;
-}
-
-const PromisesList: React.FC<PromisesListProps> = ({
-    promises,
-    setPromises,
-}) => {
-    const handleDelete = (index: number) => {
-        const updatedPromises = promises.filter((_, i) => i !== index);
-        setPromises(updatedPromises);
-    };
-
-    return (
-        <List className="formItem scrollable-list">
-            {promises.map((promise, index) => (
-                <ListItem key={index} divider>
-                    <ListItemText
-                        primary={promise.title}
-                        secondary={
-                            <>
-                                <div>Description: {promise.description}</div>
-                                <div>Attester: {promise.attester}</div>
-                            </>
-                        }
-                    />
-                    <IconButton
-                        type="submit"
-                        color="error"
-                        onClick={() => handleDelete(index)}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </ListItem>
-            ))}
-        </List>
-    );
-};
-
-interface NewPromise {
-    title: string;
-    description: string;
-    attester: string;
-}
-
-interface PromiseFormProps {
-    newPromise: NewPromise;
-    isAddressValid: boolean;
-    isTitleUnique: boolean;
-    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    addPromise: (event: React.FormEvent<HTMLFormElement>) => void;
-}
-
-const PromiseForm: React.FC<PromiseFormProps> = ({
-    newPromise,
-    isAddressValid,
-    isTitleUnique,
-    handleChange,
-    addPromise,
-}) => {
-    return (
-        <form onSubmit={addPromise} className="stack">
-            <Stack direction="column" spacing={1} padding={1}>
-                <Stack direction="row" spacing={1}>
-                    <Box flex={2}>
-                        {isTitleUnique == false ? (
-                            <TextField
-                                required
-                                error
-                                id="title-field"
-                                label="Title"
-                                helperText="Must be unique"
-                                variant="outlined"
-                                name="title"
-                                value={newPromise.title}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        ) : (
-                            <TextField
-                                required
-                                id="title-field"
-                                label="Title"
-                                variant="outlined"
-                                name="title"
-                                value={newPromise.title}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        )}
-                    </Box>
-                    <Box flex={1}>
-                        {isAddressValid === false ? (
-                            <TextField
-                                required
-                                error
-                                id="attester-field"
-                                label="Attester Public Address"
-                                helperText="Not a valid Address"
-                                variant="outlined"
-                                name="attester"
-                                value={newPromise.attester}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        ) : (
-                            <TextField
-                                required
-                                id="attester-field-error"
-                                label="Attester Public Address"
-                                variant="outlined"
-                                name="attester"
-                                value={newPromise.attester}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                        )}
-                    </Box>
-                </Stack>
-                <TextField
-                    required
-                    id="filled-multiline-static-description"
-                    label="Description"
-                    multiline
-                    rows={10}
-                    variant="outlined"
-                    name="description"
-                    value={newPromise.description}
-                    onChange={handleChange}
-                    fullWidth
-                />
-                <Box display="flex" justifyContent="right">
-                    <Tooltip title="Add Promise">
-                        <IconButton type="submit" color="success">
-                            <AddIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Stack>
-        </form>
     );
 };
 
