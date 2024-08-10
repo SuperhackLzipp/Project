@@ -67,7 +67,11 @@ export const DonationPage: React.FC = () => {
             {contractAddress === null ? (
                 <AddressInputForm setContractAddress={setContractAddress} />
             ) : (
-                <DonationForm promises={promises} setPromises={setPromises} />
+                <DonationForm
+                    contractAddress={contractAddress}
+                    promises={promises}
+                    setPromises={setPromises}
+                />
             )}
         </Box>
     );
