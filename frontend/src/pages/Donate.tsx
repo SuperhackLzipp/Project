@@ -5,7 +5,11 @@ import { Box } from "@mui/material";
 export const DonationPage: React.FC = () => {
     const [contractAddress, setContractAddress] = useState<string>("");
     const [validAddressSet, setValidAddressSet] = useState<boolean>(false);
+    const [promises, setPromises] = useState<
+        Array<{ title: string; description: string; amount: number }>
+    >([]);
 
+    const getPromises = async () => {};
     return (
         <Box
             display="flex"

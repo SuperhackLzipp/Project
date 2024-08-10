@@ -18,7 +18,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CopyableTextfield from "./CopyableTextfield";
 
-import ABI from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFactory.json";
+import { ABI_FACTORY } from "../config/config.ts"
 
 import "../styles/PartyPromisesForm.css";
 
@@ -90,7 +90,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
             await (window as any).ethereum.enable();
 
             const contract = new web3.eth.Contract(
-                ABI.abi,
+                ABI_FACTORY.abi,
                 ETH_SEPOLIA_FACTORY_ADDRESS
             );
 

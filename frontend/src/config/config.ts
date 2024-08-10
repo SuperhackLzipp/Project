@@ -11,6 +11,13 @@ export const BASE_SEPOLIA_EAS_ADDRESS =
 export const BASE_SEPOLIA_SCHEMA_REGISTRY_ADDRESS =
     "0x4200000000000000000000000000000000000020";
 
+// ABIs
+import ABI1 from "../../../contracts/out/PartyPromises.sol/PartyPromises.json";
+export const ABI_PARTY = ABI1;
+
+import ABI2 from "../../../contracts/out/PartyPromisesFactory.sol/PartyPromisesFactory.json";
+export const ABI_FACTORY = ABI2;
+
 // Schema
 export const SCHEMA =
     "bytes32 promiseTitle, string description, bool isCompleted";
