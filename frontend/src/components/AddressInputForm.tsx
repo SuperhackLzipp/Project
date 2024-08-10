@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Stack, TextField, Tooltip, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { isAddress } from "web3-validator";
+import web3 from "web3";
 
 interface AddressInputFormProps {
     setContractAddress: (address: string) => void;
@@ -26,7 +27,7 @@ const AddressInputForm: React.FC<AddressInputFormProps> = ({
         }
         console.log("submit4");
         setIsAddressValid(true);
-        setContractAddress(trimmedAddress);
+        setContractAddress(web3.utils.toChecksumAddress(trimmedAddress));
         console.log("submit5");
     };
 

@@ -1,45 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddressInputForm from "../components/AddressInputForm";
 import { Box } from "@mui/material";
+import Web3 from "web3";
+
+import { ABI_PARTY } from "../config/config";
 
 export const DonationPage: React.FC = () => {
     const [contractAddress, setContractAddress] = useState<string | null>(null);
-    const [validAddressSet, setValidAddressSet] = useState<boolean>(false);
     const [promises, setPromises] = useState<
         Array<{ title: string; description: string; amount: number }>
     >([]);
 
-    const loadContract = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!isAddress(contractAddress)) {
-            setIsAddressValid(false);
-            setValidAddressSet(false);
-            return;
-        }
-        setIsAddressValid(true);
-        setValidAddressSet(true);
-        setContractAddress(web3.utils.toChecksumAddress(contractAddress));
-        if ((window as any).ethereum) {
-            const web3 = new Web3((window as any).ethereum);
-            await (window as any).ethereum.enable();
+    useEffect(() => {
+        const loadContract = async () => {
+            if (contractAddress === null) return;
 
-            const contract = new web3.eth.Contract(
-                ABI_PARTY.abi,
-                contractAddress
-            );
+            if ((window as any).ethereum) {
+                const web3 = new Web3((window as any).ethereum);
+                await (window as any).ethereum.enable();
 
-            try {
-                const accounts = await web3.eth.getAccounts();
-                const account = accounts[0];
+                const contract = new web3.eth.Contract(
+                    ABI_PARTY.abi,
+                    contractAddress
+                );
 
-                const receipt = await contract.methods.GetPromiseTitles();
-            } catch (error) {
-                console.error(error);
+                try {
+                    const accounts = await web3.eth.getAccounts();
+                    const account = accounts[0];
+
+                    const promisesData: [string[], string[], boolean[]] =
+                        await contract.methods.GetPromises().call({
+                            from: account,
+                        });
+
+                    const promiseTitles = promisesData[0].map((title: string) =>
+                        web3.utils.hexToUtf8(title).replace(/\u0000/g, "")
+                    );
+                    const descriptions = promisesData[1];
+                    const completions = promisesData[2];
+
+                    console.log("Promise Titles:", promiseTitles);
+                    console.log("Descriptions:", descriptions);
+                    console.log("Completions:", completions);
+                    // if (receipt.events && receipt.events.)
+                } catch (error) {
+                    console.error(error);
+                }
             }
-        }
-    };
+        };
+        loadContract();
+    }, [contractAddress]);
 
-    const getPromises = async () => {};
+    // const getPromises = async () => {};
     return (
         <Box
             display="flex"
@@ -48,12 +60,8 @@ export const DonationPage: React.FC = () => {
             minHeight="100vh"
             padding={1}
         >
-            {validAddressSet === false ? (
-                <AddressInputForm
-                    contractAddress={contractAddress}
-                    setContractAddress={setContractAddress}
-                    setValidAddressSet={setValidAddressSet}
-                />
+            {contractAddress === null ? (
+                <AddressInputForm setContractAddress={setContractAddress} />
             ) : (
                 <></>
             )}
