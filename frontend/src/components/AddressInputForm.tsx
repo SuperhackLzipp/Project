@@ -1,29 +1,33 @@
 import React, { useState } from "react";
-import { Box, Stack, IconButton, TextField, Tooltip } from "@mui/material";
+import { Box, Stack, TextField, Tooltip, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { isAddress } from "web3-validator";
 
 interface AddressInputFormProps {
-    contractAddress: string;
-    setContractAddress: React.Dispatch<React.SetStateAction<string>>;
-    setValidAddressSet: React.Dispatch<React.SetStateAction<boolean>>;
+    setContractAddress: (address: string) => void;
 }
 
 const AddressInputForm: React.FC<AddressInputFormProps> = ({
-    contractAddress,
     setContractAddress,
-    setValidAddressSet,
 }) => {
+    const [address, setAddress] = useState<string | null>(null);
     const [isAddressValid, setIsAddressValid] = useState<boolean | null>(null);
-    const loadContract = (event: React.FormEvent<HTMLFormElement>) => {
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!isAddress(contractAddress)) {
+        console.log("submit");
+        if (address === null) return;
+        console.log("submit2");
+        const trimmedAddress = address.trim();
+        console.log("submit3");
+        if (!isAddress(trimmedAddress)) {
             setIsAddressValid(false);
-            setValidAddressSet(false);
             return;
         }
+        console.log("submit4");
         setIsAddressValid(true);
-        setValidAddressSet(true);
+        setContractAddress(trimmedAddress);
+        console.log("submit5");
     };
 
     return (
@@ -34,22 +38,26 @@ const AddressInputForm: React.FC<AddressInputFormProps> = ({
             minHeight="100vh"
             padding={1}
         >
-            <form onSubmit={loadContract}>
+            <form onSubmit={handleSubmit}>
                 <Stack
                     direction="row"
                     spacing={1}
                     padding={1}
                     className="stack"
                 >
-                    {isAddressValid === false ? (
+                    {isAddressValid === false ||
+                    (address !== null && !address.trim()) ? (
                         <TextField
                             required
                             error
                             id="outlined-error-helper-text"
                             label="Contract Address"
                             helperText="Not a valid Address"
-                            value={contractAddress}
-                            onChange={(e) => setContractAddress(e.target.value)}
+                            value={address || ""}
+                            onChange={(e) => {
+                                setAddress(e.target.value);
+                                setIsAddressValid(null);
+                            }}
                             fullWidth
                         />
                     ) : (
@@ -58,8 +66,8 @@ const AddressInputForm: React.FC<AddressInputFormProps> = ({
                             id="party-name-field"
                             label="Contract Address"
                             variant="outlined"
-                            value={contractAddress}
-                            onChange={(e) => setContractAddress(e.target.value)}
+                            value={address || ""}
+                            onChange={(e) => setAddress(e.target.value)}
                             fullWidth
                         />
                     )}
