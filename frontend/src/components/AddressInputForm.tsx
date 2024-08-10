@@ -16,19 +16,14 @@ const AddressInputForm: React.FC<AddressInputFormProps> = ({
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("submit");
         if (address === null) return;
-        console.log("submit2");
         const trimmedAddress = address.trim();
-        console.log("submit3");
         if (!isAddress(trimmedAddress)) {
             setIsAddressValid(false);
             return;
         }
-        console.log("submit4");
         setIsAddressValid(true);
         setContractAddress(web3.utils.toChecksumAddress(trimmedAddress));
-        console.log("submit5");
     };
 
     return (

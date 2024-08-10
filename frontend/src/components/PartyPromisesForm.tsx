@@ -149,32 +149,6 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
         <>
             <Stack direction="column" spacing={1} padding={1} className="stack">
                 <Stack direction="row" spacing={1}>
-                    {/* {(name === null || name.trim()) && nameLen < 32 ? (
-                        <TextField
-                            required
-                            id="party-name-field"
-                            label="Party Name"
-                            variant="outlined"
-                            name="attester"
-                            value={name}
-                            onChange={handleNameChange}
-                            fullWidth
-                        />
-                    ) : (
-                        <TextField
-                            required
-                            error
-                            id="party-name-field"
-                            label="Party Name"
-                            helperText="Name is required"
-                            variant="outlined"
-                            name="attester"
-                            value={name}
-                            onChange={handleNameChange}
-                            fullWidth
-                        />
-                    )} */}
-
                     <TextField
                         required
                         error={
@@ -206,37 +180,25 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                         </IconButton>
                     </Tooltip>
                 </Stack>
-                {expirationDate === null || expirationDate.trim() ? (
-                    <TextField
-                        required
-                        id="date-field"
-                        label="Expiration Date"
-                        type="date"
-                        name="promiseDate"
-                        value={expirationDate}
-                        onChange={checkDateValid}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        fullWidth
-                    />
-                ) : (
-                    <TextField
-                        required
-                        error
-                        id="date-field"
-                        label="Expiration Date"
-                        helperText="Must be a future date"
-                        type="date"
-                        name="promiseDate"
-                        value={expirationDate}
-                        onChange={checkDateValid}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        fullWidth
-                    />
-                )}
+                <TextField
+                    required
+                    id="date-field"
+                    label="Expiration Date"
+                    type="date"
+                    name="promiseDate"
+                    value={expirationDate}
+                    onChange={checkDateValid}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    fullWidth
+                    error={!(expirationDate === null || expirationDate.trim())}
+                    helperText={
+                        !(expirationDate === null || expirationDate.trim())
+                            ? "Must be a future date"
+                            : ""
+                    }
+                />
                 <Stack direction="row">
                     <NewPromiseForm
                         newPromise={newPromise}

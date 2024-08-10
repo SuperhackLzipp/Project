@@ -1,8 +1,7 @@
-import {
-    Box, IconButton, Tooltip,
-    TextField, Stack
-} from "@mui/material";
- 
+import React, { useState } from "react";
+
+import { Box, IconButton, Tooltip, TextField, Stack } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 
 interface NewPromise {
@@ -26,6 +25,8 @@ const NewPromiseForm: React.FC<NewPromiseFormProps> = ({
     handleChange,
     addPromise,
 }) => {
+    const [titleLen, setTitleLen] = useState<number>(0);
+
     return (
         <form onSubmit={addPromise} className="stack">
             <Stack direction="column" spacing={1} padding={1}>
