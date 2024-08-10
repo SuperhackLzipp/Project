@@ -115,7 +115,7 @@ contract PartyPromisesTest is Test {
     /**
      * The following tests will test all promise-related functions
      */
-    function test_AddPromise() public {
+    function test_AddPromises() public {
         // bytes32 _promiseTitle = "Promise3";
         // string memory _description = "Description 3";
         // partyPromises.AddPromise(_promiseTitle, _description);
@@ -128,8 +128,7 @@ contract PartyPromisesTest is Test {
         _uploadDescriptions[0] = "Description 3";
         _uploadDescriptions[1] = "Description 4";
 
-// Call the AddPromises function with the arrays
-partyPromises.AddPromises(promiseTitles, descriptions);
+        partyPromises.AddPromises(_uploadPromiseTitles, _uploadDescriptions);
 
         bytes32[] memory _promiseTitles;
         string[] memory _descriptions;

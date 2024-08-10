@@ -17,11 +17,10 @@ contract ResolverScript is Script {
         address easAddress = vm.envAddress("BASE_SEPOLIA_EAS_ADDRESS");
 
         IEAS eas = IEAS(easAddress);
-        bytes32 validAttester = keccak256(abi.encodePacked(vm.addr(privateKey)));
 
         vm.startBroadcast(privateKey);
 
-        resolver = new Resolver(eas, validAttester);
+        resolver = new Resolver(eas, vm.addr(privateKey));
 
         vm.stopBroadcast();
     }
