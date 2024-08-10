@@ -37,38 +37,34 @@ const NewPromisesList: React.FC<NewPromisesListProps> = ({
                             spacing={1}
                             style={{ width: "100%" }}
                         >
-                            <Box flex={2}>
-                                <TextField
-                                    value={promise.title}
-                                    variant="outlined"
-                                    label="Title"
-                                    style={{ flex: 1 }}
-                                    InputProps={{
-                                        readOnly: true,
-                                    }}
-                                />
-                            </Box>
-                            <Box flex={1}>
-                                <TextField
-                                    type="number"
-                                    value={promise.amount}
-                                    onChange={(e) =>
-                                        handleAmountChange(
-                                            index,
-                                            parseFloat(e.target.value)
-                                        )
-                                    }
-                                    label="Amount"
-                                    variant="outlined"
-                                    size="small"
-                                    style={{ marginRight: "16px" }}
-                                />
-                            </Box>
+                            <TextField
+                                value={promise.title}
+                                variant="outlined"
+                                label="Title"
+                                style={{ flex: 2 }}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
+                            <TextField
+                                type="number"
+                                value={promise.amount}
+                                onChange={(e) =>
+                                    handleAmountChange(
+                                        index,
+                                        parseFloat(e.target.value)
+                                    )
+                                }
+                                label="Amount"
+                                variant="outlined"
+                                size="small"
+                                style={{ flex: 1 }}
+                            />
                         </Stack>
                         <TextField
                             value={promise.description}
                             multiline
-                            rows={4}
+                            rows={5}
                             variant="outlined"
                             InputProps={{
                                 readOnly: true,

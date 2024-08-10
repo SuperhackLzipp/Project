@@ -13,7 +13,7 @@ export const DonationPage: React.FC = () => {
     >([]);
 
     useEffect(() => {
-        const loadContract = async () => {
+        const loadPromises = async () => {
             if (contractAddress === null) return;
 
             if ((window as any).ethereum) {
@@ -41,12 +41,19 @@ export const DonationPage: React.FC = () => {
 
                     console.log("Promise Titles:", promiseTitles);
                     console.log("Descriptions:", descriptions);
+                    setPromises(
+                        promiseTitles.map((title, index) => ({
+                            title,
+                            description: descriptions[index],
+                            amount: 0,
+                        }))
+                    );
                 } catch (error) {
                     console.error(error);
                 }
             }
         };
-        loadContract();
+        loadPromises();
     }, [contractAddress]);
 
     return (
@@ -60,7 +67,7 @@ export const DonationPage: React.FC = () => {
             {contractAddress === null ? (
                 <AddressInputForm setContractAddress={setContractAddress} />
             ) : (
-                <DonationForm/>
+                <DonationForm promises={promises} setPromises={setPromises} />
             )}
         </Box>
     );
