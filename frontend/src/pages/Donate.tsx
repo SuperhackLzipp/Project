@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AddressInputForm from "../components/AddressInputForm";
+import DonationForm from "../components/DonationForm";
 import { Box } from "@mui/material";
 import Web3 from "web3";
 
@@ -37,12 +38,9 @@ export const DonationPage: React.FC = () => {
                         web3.utils.hexToUtf8(title).replace(/\u0000/g, "")
                     );
                     const descriptions = promisesData[1];
-                    const completions = promisesData[2];
 
                     console.log("Promise Titles:", promiseTitles);
                     console.log("Descriptions:", descriptions);
-                    console.log("Completions:", completions);
-                    // if (receipt.events && receipt.events.)
                 } catch (error) {
                     console.error(error);
                 }
@@ -51,7 +49,6 @@ export const DonationPage: React.FC = () => {
         loadContract();
     }, [contractAddress]);
 
-    // const getPromises = async () => {};
     return (
         <Box
             display="flex"
@@ -63,7 +60,7 @@ export const DonationPage: React.FC = () => {
             {contractAddress === null ? (
                 <AddressInputForm setContractAddress={setContractAddress} />
             ) : (
-                <></>
+                <DonationForm/>
             )}
         </Box>
     );
