@@ -1,5 +1,5 @@
 import React from "react";
-import { List, ListItem, TextField, Stack, Box } from "@mui/material";
+import { List, ListItem, TextField, Stack } from "@mui/material";
 
 interface Promise {
     title: string;
@@ -49,13 +49,15 @@ const NewPromisesList: React.FC<NewPromisesListProps> = ({
                             <TextField
                                 type="number"
                                 value={promise.amount}
-                                onChange={(e) =>
-                                    handleAmountChange(
-                                        index,
-                                        parseFloat(e.target.value)
-                                    )
-                                }
-                                label="Amount"
+                                onChange={(e) => {
+                                    const value = parseFloat(e.target.value);
+                                    if (value >= 0) {
+                                        handleAmountChange(index, value);
+                                    } else {
+                                        handleAmountChange(index, 0);
+                                    }
+                                }}
+                                label="Amount in ETH"
                                 variant="outlined"
                                 size="small"
                                 style={{ flex: 1 }}

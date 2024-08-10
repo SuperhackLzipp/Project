@@ -1,6 +1,6 @@
 import React from "react";
 import DonationPromisesList from "./DonationPromisesList";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Web3 from "web3";
 import { ABI_PARTY } from "../config/config";
@@ -22,9 +22,9 @@ const DonationForm: React.FC<DonationFormProps> = ({
     promises,
     setPromises,
 }) => {
-    const [amount, setAmount] = React.useState<number>(0);
-
-    const donate = async () => {
+    const donate = async (event: React.FormEvent) => {
+        event.preventDefault();
+        console.log("Donating to Party");
         const totalAmount = promises.reduce(
             (acc, promise) => acc + promise.amount,
             0
@@ -48,7 +48,10 @@ const DonationForm: React.FC<DonationFormProps> = ({
                     "ether"
                 );
                 const promisesDonatedTo = promises.map((promise) => {
-                    return web3.utils.utf8ToHex(promise.title);
+                    return web3.utils.padRight(
+                        web3.utils.asciiToHex(promise.title),
+                        64
+                    );
                 });
                 const amountsDonated = promises.map((promise) => {
                     return web3.utils.toWei(promise.amount.toString(), "ether");
@@ -60,13 +63,14 @@ const DonationForm: React.FC<DonationFormProps> = ({
                         from: account,
                         value: totalAmountInWei,
                     });
+                console.log("Receipt:", receipt);
             } catch (error) {
                 console.error(error);
             }
         }
     };
     return (
-        <form>
+        <form onSubmit={donate} className="stack">
             <Stack
                 direction="column"
                 spacing={1}
@@ -78,9 +82,13 @@ const DonationForm: React.FC<DonationFormProps> = ({
                     promises={promises}
                     setPromises={setPromises}
                 />
-                <IconButton color="success">
-                    <CheckCircleIcon />
-                </IconButton>
+                <Box display="flex" justifyContent="flex-end">
+                    <Tooltip title="Donate to Party">
+                        <IconButton color="success" type="submit">
+                            <CheckCircleIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Stack>
         </form>
     );
