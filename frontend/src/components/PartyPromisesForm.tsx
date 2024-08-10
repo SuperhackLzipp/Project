@@ -25,6 +25,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
     setContractCreated,
 }) => {
     const [name, setName] = useState<string | null>(null);
+    const [nameLen, setNameLen] = useState<number>(0);
     const [expirationDate, setExpirationDate] = useState<string | null>(null);
     const [promises, setPromises] = useState<
         Array<{ title: string; description: string; attester: string }>
@@ -136,11 +137,19 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
         setNewPromise((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        const encoder = new TextEncoder();
+        const encodedInput = encoder.encode(input);
+        setNameLen(encodedInput.length);
+        setName(input);
+    };
+
     return (
         <>
             <Stack direction="column" spacing={1} padding={1} className="stack">
                 <Stack direction="row" spacing={1}>
-                    {name === null || name.trim() ? (
+                    {/* {(name === null || name.trim()) && nameLen < 32 ? (
                         <TextField
                             required
                             id="party-name-field"
@@ -148,7 +157,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                             variant="outlined"
                             name="attester"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={handleNameChange}
                             fullWidth
                         />
                     ) : (
@@ -161,10 +170,31 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                             variant="outlined"
                             name="attester"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={handleNameChange}
                             fullWidth
                         />
-                    )}
+                    )} */}
+
+                    <TextField
+                        required
+                        error={
+                            !((name === null || name.trim()) && nameLen < 32)
+                        }
+                        id="party-name-field"
+                        label="Party Name"
+                        helperText={
+                            !((name === null || name.trim()) && nameLen < 32)
+                                ? nameLen >= 32
+                                    ? "Name is too long"
+                                    : "Name is required"
+                                : ""
+                        }
+                        variant="outlined"
+                        name="attester"
+                        value={name}
+                        onChange={handleNameChange}
+                        fullWidth
+                    />
                     <Tooltip title="Upload the Promises">
                         <IconButton
                             color="success"
