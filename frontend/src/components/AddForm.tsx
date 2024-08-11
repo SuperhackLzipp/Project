@@ -145,13 +145,31 @@ const AddForm: React.FC<AddFormProps> = ({ contractAddress, oldPromises }) => {
                 {(oldPromises.length > 0 || promises.length > 0) && (
                     <Stack direction="column" spacing={1} padding={1}>
                         {oldPromises.length > 0 && (
-                            <ViewPromisesList promises={oldPromises} />
+                            <>
+                                <Typography variant="h6">
+                                    Existing Promises
+                                </Typography>
+                                <ViewPromisesList promises={oldPromises} />
+                            </>
                         )}
                         {promises.length > 0 && (
-                            <NewPromisesList
-                                promises={promises}
-                                setPromises={setPromises}
-                            />
+                            <>
+                                <Typography variant="h6">
+                                    New Promises
+                                    <Tooltip title="Upload Promises">
+                                        <IconButton
+                                            onClick={uploadPromises}
+                                            color="primary"
+                                        >
+                                            <FileUploadIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Typography>
+                                <NewPromisesList
+                                    promises={promises}
+                                    setPromises={setPromises}
+                                />
+                            </>
                         )}
                     </Stack>
                 )}

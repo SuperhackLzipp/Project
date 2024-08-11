@@ -11,7 +11,6 @@ interface ViewPromisesListProps {
 }
 
 const ViewPromisesList: React.FC<ViewPromisesListProps> = ({ promises }) => {
-    console.log("from viewpromiseslist: ", promises);
     return (
         <List className="formItem scrollable-list">
             {promises.map((promise, index) => (
