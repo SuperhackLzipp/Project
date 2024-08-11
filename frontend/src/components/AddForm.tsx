@@ -142,20 +142,19 @@ const AddForm: React.FC<AddFormProps> = ({ contractAddress, oldPromises }) => {
                     promises={promises}
                     addPromise={addPromise}
                 />
-                {oldPromises.length > 0 ||
-                    (promises.length > 0 && (
-                        <Stack direction="column" spacing={1} padding={1}>
-                            {oldPromises.length > 0 && (
-                                <ViewPromisesList promises={oldPromises} />
-                            )}
-                            {promises.length > 0 && (
-                                <NewPromisesList
-                                    promises={promises}
-                                    setPromises={setPromises}
-                                />
-                            )}
-                        </Stack>
-                    ))}
+                {(oldPromises.length > 0 || promises.length > 0) && (
+                    <Stack direction="column" spacing={1} padding={1}>
+                        {oldPromises.length > 0 && (
+                            <ViewPromisesList promises={oldPromises} />
+                        )}
+                        {promises.length > 0 && (
+                            <NewPromisesList
+                                promises={promises}
+                                setPromises={setPromises}
+                            />
+                        )}
+                    </Stack>
+                )}
             </Stack>
             <Modal
                 open={isModalOpen}
