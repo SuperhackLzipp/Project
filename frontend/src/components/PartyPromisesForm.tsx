@@ -17,6 +17,12 @@ import "../styles/PartyPromisesForm.css";
 
 import { ETH_SEPOLIA_FACTORY_ADDRESS } from "../config/config";
 
+interface Promise {
+    title: string;
+    description: string;
+    attester: string;
+}
+
 interface PartyPromisesFormProps {
     setContractCreated: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -27,14 +33,12 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
     const [name, setName] = useState<string | null>(null);
     const [nameLen, setNameLen] = useState<number>(0);
     const [expirationDate, setExpirationDate] = useState<string | null>(null);
-    const [promises, setPromises] = useState<
-        Array<{ title: string; description: string; attester: string }>
-    >([]);
-    const [newPromise, setNewPromise] = useState<{
-        title: string;
-        description: string;
-        attester: string;
-    }>({ title: "", description: "", attester: "" });
+    const [promises, setPromises] = useState<Array<Promise>>([]);
+    const [newPromise, setNewPromise] = useState<Promise>({
+        title: "",
+        description: "",
+        attester: "",
+    });
     const [isAddressValid, setIsAddressValid] = useState<boolean>(true);
     const [isTitleUnique, setIsTitleUnique] = useState<boolean>(true);
     const [isDateValid, setIsDateValid] = useState<boolean>(false);

@@ -39,8 +39,6 @@ export const DonationPage: React.FC = () => {
                     );
                     const descriptions = promisesData[1];
 
-                    console.log("Promise Titles:", promiseTitles);
-                    console.log("Descriptions:", descriptions);
                     setPromises(
                         promiseTitles.map((title, index) => ({
                             title,
