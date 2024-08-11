@@ -4,7 +4,6 @@ import { List, ListItem, IconButton, TextField, Stack } from "@mui/material";
 interface Promise {
     title: string;
     description: string;
-    attester: string;
 }
 
 interface ViewPromisesListProps {
@@ -12,6 +11,7 @@ interface ViewPromisesListProps {
 }
 
 const ViewPromisesList: React.FC<ViewPromisesListProps> = ({ promises }) => {
+    console.log("from viewpromiseslist: ", promises);
     return (
         <List className="formItem scrollable-list">
             {promises.map((promise, index) => (
@@ -22,30 +22,15 @@ const ViewPromisesList: React.FC<ViewPromisesListProps> = ({ promises }) => {
                         padding={1}
                         style={{ width: "100%" }}
                     >
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            style={{ width: "100%" }}
-                        >
-                            <TextField
-                                value={promise.title}
-                                variant="outlined"
-                                label="Title"
-                                style={{ flex: 2 }}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                            />
-                            <TextField
-                                value={promise.attester}
-                                variant="outlined"
-                                label="Attester"
-                                style={{ flex: 1 }}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                            />
-                        </Stack>
+                        <TextField
+                            value={promise.title}
+                            variant="outlined"
+                            label="Title"
+                            style={{ flex: 2 }}
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                        />
                         <TextField
                             value={promise.description}
                             multiline
