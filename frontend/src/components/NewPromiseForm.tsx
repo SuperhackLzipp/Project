@@ -14,7 +14,9 @@ interface NewPromiseFormProps {
     newPromise: NewPromise;
     isAddressValid: boolean;
     isTitleUnique: boolean;
+    setIsTitleUnique: (isTitleUnique: boolean) => void;
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    promises: Array<{ title: string; description: string; attester: string }>;
     addPromise: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
@@ -22,10 +24,25 @@ const NewPromiseForm: React.FC<NewPromiseFormProps> = ({
     newPromise,
     isAddressValid,
     isTitleUnique,
+    setIsTitleUnique,
     handleChange,
+    promises,
     addPromise,
 }) => {
     const [titleLen, setTitleLen] = useState<number>(0);
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        const encoder = new TextEncoder();
+        const encodedInput = encoder.encode(input);
+        setTitleLen(encodedInput.length);
+        const titleExists = promises.some(
+            (promise) =>
+                promise.title.trim().toLowerCase() ===
+                input.trim().toLowerCase()
+        );
+        setIsTitleUnique(!titleExists);
+    };
 
     return (
         <form onSubmit={addPromise} className="stack">
@@ -33,16 +50,23 @@ const NewPromiseForm: React.FC<NewPromiseFormProps> = ({
                 <Stack direction="row" spacing={1}>
                     <TextField
                         required
-                        error={isTitleUnique === false}
+                        error={isTitleUnique === false || titleLen > 32}
                         id="title-field"
                         label="Title"
                         helperText={
-                            isTitleUnique === false ? "Must be unique" : ""
+                            isTitleUnique === false
+                                ? "Must be unique"
+                                : newPromise.title.length > 32
+                                ? "Title is too long"
+                                : ""
                         }
                         variant="outlined"
                         name="title"
                         value={newPromise.title}
-                        onChange={handleChange}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            handleChange(e);
+                            handleTitleChange(e);
+                        }}
                         style={{ flex: 2 }}
                     />
                     <TextField

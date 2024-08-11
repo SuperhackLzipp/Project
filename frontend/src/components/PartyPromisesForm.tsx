@@ -204,7 +204,9 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                         newPromise={newPromise}
                         isAddressValid={isAddressValid}
                         isTitleUnique={isTitleUnique}
+                        setIsTitleUnique={setIsTitleUnique}
                         handleChange={handleChange}
+                        promises={promises}
                         addPromise={addPromise}
                     />
                     {promises.length > 0 && (
