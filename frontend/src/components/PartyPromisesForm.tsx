@@ -100,7 +100,7 @@ export const PartyPromisesForm: React.FC<PartyPromisesFormProps> = ({
                                 Web3.utils.asciiToHex(title),
                                 64
                             )
-                        ), // Convert each title to bytes32
+                        ),
                         descriptions
                     )
                     .send({ from: account });
